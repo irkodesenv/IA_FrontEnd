@@ -1,0 +1,40 @@
+/* Overlay */
+/* Sidebar */
+.app-chat-sidebar-left {
+    position: fixed; /* Fixa o sidebar na tela */
+    top: 0;
+    right: 0;
+    width: 300px; /* Ajuste conforme necessário */
+    height: 100%;
+    background-color: #fff;
+    z-index: 1001; /* Z-index maior que o do overlay */
+    transform: translateX(100%); /* Começa fora da tela */
+    transition: transform 0.3s ease; /* Transição suave ao mostrar o sidebar */
+}
+
+.app-chat-sidebar-left.show {
+    transform: translateX(0); /* Move o sidebar para dentro da tela */
+    visibility: visible; /* Torna visível quando a classe 'show' é adicionada */
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Fundo semitransparente */
+    z-index: 1000; /* Z-index do overlay */
+    opacity: 0; /* Inicialmente invisível */
+    visibility: hidden; /* Inicialmente escondido */
+    pointer-events: none; /* Ignora eventos de clique */
+    transition: opacity 0.3s ease, visibility 0.3s ease; /* Transições suaves para visibilidade e opacidade */
+}
+
+.overlay.show {
+    opacity: 1; /* Torna visível quando a classe 'show' é adicionada */
+    visibility: visible; /* Torna visível */
+    pointer-events: auto; /* Permite eventos de clique */
+}
+
+
