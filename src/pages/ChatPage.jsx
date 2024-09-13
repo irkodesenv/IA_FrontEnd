@@ -6,6 +6,8 @@ import { ListaAgentesChat } from '../components/chat/ListaAgentesChat';
 import { HeaderAgente } from '../components/chat/HeaderAgente';
 import { ChatComponent } from '../components/chat/ChatComponent';
 
+import '../styles/chat.css';
+
 
 export const ChatPage = () => {
   const [submitChat, setSubmitChat] = useState();
@@ -17,6 +19,7 @@ export const ChatPage = () => {
   const [headerAgente, setHeaderAgente] = useState(null)
   const [historicoChat, setHistoricoChat] = useState([])
   const [mostrarLoadginPergunta, setMostrarLoadginPergunta] = useState(false)
+  const [mostrarAvaliacaoResposta, setMostrarAvaliacaoResposta] = useState(false)
 
   // Agentes
   useEffect(() => {
@@ -33,8 +36,23 @@ export const ChatPage = () => {
   useEffect(() => {
     const fetchChats = async () => {
       const chat = await listarChats("");
-      console.log(chat)
       setListaChat(chat);
+
+      // Ultimo agente da lista default selecionado
+
+      if (chat.length > 0) {
+        setActiveBoxChats(chat[0].idmaster)
+
+        // Gera Header
+        const objSelecionado = chat.find(item => item.idmaster === chat[0].idmaster)
+        setHeaderAgente(objSelecionado);
+
+        // Recarrega chat historico
+        listaHistoricoChat(objSelecionado);
+
+      }
+
+
     };
 
     fetchChats();
@@ -81,7 +99,7 @@ export const ChatPage = () => {
 
   const handleSubmitChat = async () => {
 
-    // Usado para preencher de forma prévia o que o usuario perguntou, evitando que so seja carregado junto com a resposta.
+    // Usado para preencher de forma prévia o que o usuario perguntou, evitando que so seja carregado no chat junto com a resposta.
     const obj_usuario_pergunta = {
       "autor": "2",
       "mensagem": message
@@ -90,7 +108,7 @@ export const ChatPage = () => {
     setHistoricoChat(prevHistorico => [...historicoChat, obj_usuario_pergunta]);
 
     setMostrarLoadginPergunta(true)
-    
+
     setMessage("");
 
     try {
@@ -107,6 +125,7 @@ export const ChatPage = () => {
 
       setMostrarLoadginPergunta(false)
       listaHistoricoChat(headerAgente);
+      setMostrarAvaliacaoResposta(true)
 
     } catch {
       console.log("erro")
@@ -158,8 +177,31 @@ export const ChatPage = () => {
     }
   }
 
+  const handleFiltrarAgente = (index) => {
+    if (index) {
+      const listaFiltrada = listaChat.filter((item) => {
+        return item.agente.nome.toLowerCase().includes(index.toLowerCase())
+      })
+
+      setListaChat(listaFiltrada)
+
+      return true
+    }
+
+    if (!index) {
+      const fetchChats = async () => {
+        const chat = await listarChats("");
+        setListaChat(chat);
+      };
+
+      fetchChats();
+      return true
+    }
+  }
+
   return (
     <>
+
       <div className="app-chat card overflow-hidden">
         <div className="row g-0">
           <div
@@ -177,7 +219,9 @@ export const ChatPage = () => {
                     className="form-control chat-search-input"
                     placeholder="Pesquisar..."
                     aria-label="Pesquisar..."
-                    aria-describedby="basic-addon-search31" />
+                    aria-describedby="basic-addon-search31"
+                    onChange={(e) => handleFiltrarAgente(e.target.value)}
+                  />
                 </div>
 
                 <SideBarMenuLeft lista_agentes={listaAgentes} handleAbrirNovoChat={handleAbrirNovoChat} />
@@ -198,16 +242,24 @@ export const ChatPage = () => {
 
               <HeaderAgente headerAgente={headerAgente} />
 
-              <ChatComponent historicoChat={historicoChat} mostrarLoadginPergunta={mostrarLoadginPergunta}/>
+              <ChatComponent
+                historicoChat={historicoChat}
+                mostrarLoadginPergunta={mostrarLoadginPergunta}
+                resposta_avaliada_pelo_usuario={mostrarAvaliacaoResposta}
+                setMostrarAvaliacaoResposta={setMostrarAvaliacaoResposta}
+              />
 
               <div className="chat-history-footer shadow-xs">
+
                 <form className="form-send-message d-flex justify-content-between align-items-center">
                   <input
                     id="input-message-chat"
                     className="form-control message-input border-0 me-4 shadow-none"
                     value={message}
-                    placeholder="O que deseja?"
-                    onChange={(e) => setMessage(e.target.value)} />
+                    placeholder={mostrarAvaliacaoResposta ? "Avalie para perguntar novamente" : "O que deseja?"}
+                    onChange={(e) => setMessage(e.target.value)}
+                    disabled={mostrarAvaliacaoResposta} />
+
                   <div className="message-actions d-flex align-items-center">
 
                     {/*
@@ -220,7 +272,7 @@ export const ChatPage = () => {
                           <input type="file" id="attach-doc" hidden />
                         </label>
                           */}
-                    <button onClick={(e) => { e.preventDefault(); handleSubmitChat(); }} className="btn btn-primary d-flex send-msg-btn">
+                    <button onClick={(e) => { e.preventDefault(); handleSubmitChat(); }} disabled={mostrarAvaliacaoResposta} className="btn btn-primary d-flex send-msg-btn">
                       <span className="align-middle d-md-inline-block d-none">Enviar</span>
                       <i className="bx bx-paper-plane bx-sm ms-md-2 ms-0"></i>
                     </button>

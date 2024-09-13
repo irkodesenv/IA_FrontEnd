@@ -1,15 +1,20 @@
 import React, { useEffect, useRef } from 'react';
 
-export const ChatComponent = ({ historicoChat, mostrarLoadginPergunta }) => {
+export const ChatComponent = ({ historicoChat, mostrarLoadginPergunta, resposta_avaliada_pelo_usuario, setMostrarAvaliacaoResposta }) => {
     const endOfMessagesRef = useRef(null);
 
     useEffect(() => {
         endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [historicoChat]);
 
+    const handleAvaliarResposta = () => {
+        setMostrarAvaliacaoResposta(false)
+    }
+
+
     const formatarMensagem = (mensagem) => {
         const linhas = mensagem.split('\n');
-    
+
         return (
             <div>
                 {linhas.map((linha, index) => {
@@ -17,12 +22,12 @@ export const ChatComponent = ({ historicoChat, mostrarLoadginPergunta }) => {
                     if (linha.startsWith('### ')) {
                         return <h4 key={index}>{linha.replace(/^###\s*/, '').replace(/\*\*/g, '')}</h4>;
                     }
-    
+
                     // Verifica se a linha é um título no formato ####
                     if (linha.startsWith('#### ')) {
                         return <h5 key={index}>{linha.replace(/^####\s*/, '').replace(/\*\*/g, '')}</h5>;
                     }
-    
+
                     // Verifica se a linha é uma lista numerada
                     if (/^\d+\.\s/.test(linha)) {
                         return (
@@ -35,11 +40,11 @@ export const ChatComponent = ({ historicoChat, mostrarLoadginPergunta }) => {
                             </ul>
                         );
                     }
-    
+
                     // Caso a linha não seja um título nem uma lista numerada
                     return (
                         <p key={index}>
-                            {linha.split('**').map((fragment, i) =>                                 
+                            {linha.split('**').map((fragment, i) =>
                                 i % 2 === 1 ? <strong key={i}>{fragment}</strong> : fragment
                             )}
                         </p>
@@ -48,14 +53,13 @@ export const ChatComponent = ({ historicoChat, mostrarLoadginPergunta }) => {
             </div>
         );
     };
-    
-    
+
 
     return (
         <div className="chat-history-body">
-            <ul className="list-unstyled chat-history">
+            <ul className="list-unstyled chat-history" style={{ marginBottom: 0 }}>
                 {historicoChat.map((item, index) => (
-                    <li key={index} style={{marginBottom: 15, marginTop: 15}} className={`chat-message ${item.autor === "2" ? "chat-message-right" : ""}`}>
+                    <li key={index} style={{ marginBottom: 15, marginTop: 15 }} className={`chat-message ${item.autor === "2" ? "chat-message-right" : ""}`}>
                         <div className="d-flex overflow-hidden">
                             {item.autor === "1" && (
                                 <div className="user-avatar flex-shrink-0 me-4">
@@ -87,6 +91,26 @@ export const ChatComponent = ({ historicoChat, mostrarLoadginPergunta }) => {
                         </div>
                     </li>
                 ))}
+
+
+                {
+                    resposta_avaliada_pelo_usuario ? (
+                        <div class="demo-inline-spacing" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', marginLeft: '48px' }}>
+                            <span style={{ marginRight: '10px' }}>
+                                Esta resposta, foi útil?
+                            </span>
+
+                            <button onClick={handleAvaliarResposta} type="button" class="btn btn-icon rounded-pill btn-label-like-chat" style={{ marginRight: '10px' }}>
+                                <i class="tf-icons bx bx-like bx-22px"></i>
+                            </button>
+
+                            <button onClick={handleAvaliarResposta} type="button" class="btn btn-icon rounded-pill btn-label-pinterest">
+                                <i class="tf-icons bx bx-dislike bx-22px"></i>
+                            </button>
+                        </div>
+
+                    ) : ("")
+                }
 
                 {mostrarLoadginPergunta && (
                     <div className="d-flex align-items-center">
