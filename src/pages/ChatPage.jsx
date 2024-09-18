@@ -265,13 +265,13 @@ export const ChatPage = () => {
                     {/*
                         <i
                           className="speech-to-text bx bx-microphone bx-md btn btn-icon cursor-pointer text-heading"></i>
-                    
+                          */}
 
                         <label htmlhtmlFor="attach-doc" className="form-label mb-0">
                           <i className="bx bx-paperclip bx-md cursor-pointer btn btn-icon mx-1 text-heading"></i>
                           <input type="file" id="attach-doc" hidden />
                         </label>
-                          */}
+                    
                     <button onClick={(e) => { e.preventDefault(); handleSubmitChat(); }} disabled={mostrarAvaliacaoResposta} className="btn btn-primary d-flex send-msg-btn">
                       <span className="align-middle d-md-inline-block d-none">Enviar</span>
                       <i className="bx bx-paper-plane bx-sm ms-md-2 ms-0"></i>
@@ -281,12 +281,6 @@ export const ChatPage = () => {
               </div>
             </div>
           </div>
-
-
-
-
-
-
 
           <div className="col app-chat-sidebar-right app-sidebar overflow-hidden" id="app-chat-sidebar-right">
             <div

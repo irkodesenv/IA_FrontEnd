@@ -2,3 +2,44 @@
     padding-left: 30px !important;
     padding-right: 30px !important;
 }
+
+.file-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.file-preview {
+    position: relative;
+    margin: 10px;
+    text-align: center;
+}
+
+.file-thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.file-name {
+    margin-top: 5px;
+    font-size: 12px;
+    max-width: 80px;
+    word-wrap: break-word;
+}
+
+.remove-file-button {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ff4d4f;
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 12px;
+}
