@@ -160,6 +160,24 @@ export const AgentePage = () => {
                                             </div>
 
                                             <div className="col-md-3">
+                                                <label htmlFor="tokens_maximos_agente" className="form-label">Tipo agente</label>
+                                                <select id="select-clientes" name="select-clientes" class="select2 form-select" data-allow-clear="true">
+                                                        <option value="">Selecione</option>
+                                                        <option value="1">Financeiro</option>
+                                                        <option value="1">DCTF</option>
+                                                        <option value="1">Folha</option>
+                                                        <option value="1">Fiscal</option>
+                                
+                                                    </select>
+                                            </div>                                       
+
+
+
+
+
+
+                                           
+                                            <div className="col-md-3">
                                                 <label htmlFor="tokens_maximos_agente" className="form-label">Token Maximo</label>
                                                 <input
                                                     type="text"
@@ -171,6 +189,7 @@ export const AgentePage = () => {
                                                     aria-describedby="defaultFormControlHelp" />
                                                 {errors?.tokens_maximos_agente?.type === 'required' && <p className='input-error-message'> Preencher tokens. </p>}
                                             </div>
+                                             
                                         </div>
 
                                         <div className="row card-padding-30 mt-3">

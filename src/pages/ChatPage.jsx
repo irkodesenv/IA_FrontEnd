@@ -20,6 +20,7 @@ export const ChatPage = () => {
   const [historicoChat, setHistoricoChat] = useState([])
   const [mostrarLoadginPergunta, setMostrarLoadginPergunta] = useState(false)
   const [mostrarAvaliacaoResposta, setMostrarAvaliacaoResposta] = useState(false)
+  const [arquivo, setArquivo] = useState([])
 
   // Agentes
   useEffect(() => {
@@ -59,6 +60,9 @@ export const ChatPage = () => {
 
   }, []);
 
+  const handleArquivo = (e) => {
+    setArquivo(e.target.files[0])
+  }
 
   const listarAgentes = async (id_agente) => {
     const agente = await apiInstance.get(`v1/agente/${id_agente ? id_agente + "/" : ""}`);
@@ -78,7 +82,7 @@ export const ChatPage = () => {
     const historicoChat = await apiInstance.get(`v1/chat/?idmaster=${id_chat}`);
 
     return Array.isArray(historicoChat.data) ? historicoChat.data : [historicoChat.data]
-  }
+  };
 
 
   const handlExcluirChat = async (index) => {
@@ -105,6 +109,18 @@ export const ChatPage = () => {
       "mensagem": message
     }
 
+    const form_obj_agente = new FormData();
+    form_obj_agente.append('idmaster', activeBoxChats);
+    form_obj_agente.append('id_usuario', "1");
+    form_obj_agente.append('id_agente', headerAgente.id_agente);
+    form_obj_agente.append('autor', "2");
+    form_obj_agente.append('mensagem', message);
+
+    if (arquivo) {
+      form_obj_agente.append('arquivo', arquivo);
+    }
+
+
     setHistoricoChat(prevHistorico => [...historicoChat, obj_usuario_pergunta]);
 
     setMostrarLoadginPergunta(true)
@@ -121,7 +137,7 @@ export const ChatPage = () => {
         "mensagem": message
       }
 
-      await apiInstance.post(`v1/chat/enviarPergunta/`, obj_send_message)
+      await apiInstance.post(`v1/chat/enviarPergunta/`, form_obj_agente)
 
       setMostrarLoadginPergunta(false)
       listaHistoricoChat(headerAgente);
@@ -153,7 +169,7 @@ export const ChatPage = () => {
     } catch (erro) {
       console.log(erro)
     }
-  }
+  };
 
 
   const listaHistoricoChat = async (objSelecionado) => {
@@ -175,7 +191,8 @@ export const ChatPage = () => {
       // Recarrega chat historico
       listaHistoricoChat(objSelecionado);
     }
-  }
+  };
+
 
   const handleFiltrarAgente = (index) => {
     if (index) {
@@ -265,13 +282,13 @@ export const ChatPage = () => {
                     {/*
                         <i
                           className="speech-to-text bx bx-microphone bx-md btn btn-icon cursor-pointer text-heading"></i>
-                          */}
+                    */}
 
-                        <label htmlhtmlFor="attach-doc" className="form-label mb-0">
-                          <i className="bx bx-paperclip bx-md cursor-pointer btn btn-icon mx-1 text-heading"></i>
-                          <input type="file" id="attach-doc" hidden />
-                        </label>
-                    
+                    <label htmlFor="attach-doc" className="form-label mb-0">
+                      <i className="bx bx-paperclip bx-md cursor-pointer btn btn-icon mx-1 text-heading"></i>
+                      <input type="file" name="arquivo_upload" onChange={(e) => handleArquivo(e)} id="attach-doc" hidden />
+                    </label>
+
                     <button onClick={(e) => { e.preventDefault(); handleSubmitChat(); }} disabled={mostrarAvaliacaoResposta} className="btn btn-primary d-flex send-msg-btn">
                       <span className="align-middle d-md-inline-block d-none">Enviar</span>
                       <i className="bx bx-paper-plane bx-sm ms-md-2 ms-0"></i>
