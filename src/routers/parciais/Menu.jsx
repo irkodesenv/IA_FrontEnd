@@ -183,7 +183,7 @@ const Menu = () => {
                             </Link>
                         </li>
                         <li className={`menu-item ${activeSubIndex === 6 ? 'active' : ''}`}>
-                            <Link to="/" onClick={() => setActiveSubItem(6)} className="menu-link">
+                            <Link to="/usuarios" onClick={() => setActiveSubItem(6)} className="menu-link">
                                 <div className="text-truncate" data-i18n="Usuários">Usuários</div>
                             </Link>
                         </li>                   
