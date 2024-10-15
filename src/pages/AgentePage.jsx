@@ -159,7 +159,7 @@ export const AgentePage = () => {
                                                 {errors?.descricao_agente?.type === 'required' && <p className='input-error-message'> Descrição obrigatória. </p>}
                                             </div>
 
-                                            <div className="col-md-3">
+                                            <div className="col-md-2">
                                                 <label htmlFor="tokens_maximos_agente" className="form-label">Tipo agente</label>
                                                 <select id="select-clientes" name="select-clientes" class="select2 form-select" data-allow-clear="true">
                                                         <option value="">Selecione</option>
@@ -169,15 +169,9 @@ export const AgentePage = () => {
                                                         <option value="1">Fiscal</option>
                                 
                                                     </select>
-                                            </div>                                       
-
-
-
-
-
-
+                                            </div>  
                                            
-                                            <div className="col-md-3">
+                                            <div className="col-md-1">
                                                 <label htmlFor="tokens_maximos_agente" className="form-label">Token Maximo</label>
                                                 <input
                                                     type="text"
@@ -189,11 +183,13 @@ export const AgentePage = () => {
                                                     aria-describedby="defaultFormControlHelp" />
                                                 {errors?.tokens_maximos_agente?.type === 'required' && <p className='input-error-message'> Preencher tokens. </p>}
                                             </div>
+
+
                                              
                                         </div>
 
                                         <div className="row card-padding-30 mt-3">
-                                            <div className="col-md-6">
+                                            <div className="col-md-8">
                                                 <label className="col-sm-3 col-form-label" htmlFor="instrucao_agente" >Instrução</label>
                                                 <textarea
                                                     name="instrucao_agente"
@@ -206,7 +202,7 @@ export const AgentePage = () => {
                                                 {errors?.instrucao_agente?.type === 'required' && <p className='input-error-message'> Instrução obrigatória. </p>}
                                             </div>
 
-                                            <div className="col-6 mt-6">
+                                            <div className="col-4 mt-6">
                                                 <h5 className="card-header">Logo do agente</h5>
                                                 <div className="card-body">
                                                     <div className="fallback">
