@@ -11,6 +11,7 @@ import { ChatPage } from './pages/ChatPage.jsx';
 import { AgentePage } from './pages/AgentePage.jsx';
 import { HomePage } from './pages/HomePage.jsx';
 import { UsuariosPage } from './pages/UsuariosPage.jsx';
+import ProtectedRoute  from './routers/ProtectedRoute.jsx';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -26,19 +27,35 @@ const router = createBrowserRouter([
     children: [      
       {
         path: "/",
-        element: <HomePage />
+        element: (
+          <ProtectedRoute>
+            <HomePage />
+          </ProtectedRoute>
+        )
       },
       {
         path: "chat",
-        element: <ChatPage />
+        element: (
+          <ProtectedRoute>
+            <ChatPage />
+          </ProtectedRoute>
+        )
       },
       {
         path: "agentes",
-        element: <AgentePage />
+        element: (
+          <ProtectedRoute>
+            <AgentePage />
+          </ProtectedRoute>
+        )
       },
       {
         path: "usuarios",
-        element: <UsuariosPage />
+        element:(
+          <ProtectedRoute>
+            <UsuariosPage />
+          </ProtectedRoute>
+        ) 
       }
     ]
   },

@@ -5,16 +5,45 @@ import apiInstance from './utils/api-instance';
 function Login() {
   const [login, setLogin] = useState("");
   const [senha, setSenha] = useState("");
+  const [flagSenhaInvalida, setFlagSenhaInvalida] = useState(false)
 
   const handleSubmitLogin = async (e) => {
-    e.preventDefault(); // Certifique-se de prevenir o comportamento padrão do formulário
-    const form_data = {
-      username: login,
-      password: senha
-    }
-
-    await apiInstance.post("v1/usuario/auth_user/", form_data)
-    
+    e.preventDefault();
+  
+    fetch('http://127.0.0.1:8000/api/v1/token/', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+          username: login,
+          password: senha
+      })
+    })
+    .then(response => {
+      const statusCode = response.status;
+      return response.json().then(data => ({
+        statusCode: statusCode,
+        data: data
+      }));
+    })
+    .then(result => {     
+      const { statusCode, data } = result;
+  
+      if (statusCode === 200) {
+        setFlagSenhaInvalida(false)
+        // Armazena o token JWT no localStorage ou sessionStorage
+        localStorage.setItem('access_token', data.access);
+        localStorage.setItem('refresh_token', data.refresh);
+        
+        window.location.href = '/Chat'; 
+      } else {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        setFlagSenhaInvalida(true)
+      }
+    })
+    .catch(error => console.error('Erro no login:', error));
   }
 
   return (
@@ -65,8 +94,15 @@ function Login() {
                       required
                       aria-describedby="password" />
                   </div>
-                </div>                
-
+                </div>   
+                {
+                  flagSenhaInvalida ? (
+                      <div class="alert alert-danger alert-dismissible" role="alert">
+                      Login e/ou senha inválido!
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div> 
+                  ):("")
+                }
                 <button type="submit" className="btn btn-primary d-grid w-100">Entrar</button>
               </form>      
 
