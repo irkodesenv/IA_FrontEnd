@@ -13,31 +13,35 @@ export const ListaAgentesChat = ({ lista_chat, handlExcluirChat, handleToogleBox
                     {
                         lista_chat.length > 0 ? (
                             lista_chat.map((item, key) => (
-                                <li key={item.idmaster} onClick={(e) => handleToogleBoxCharts(item.idmaster)} className={`chat-contact-list-item mb-1 ${activeBoxChats === item.idmaster ? 'active' : ''} `}>
-                                    <a className="d-flex align-items-center">
-                                        <div className="flex-shrink-0 avatar avatar-online">
-                                            <img src={`${process.env.PUBLIC_URL}/static/assets/img/avatars/gpt1.jpg`} alt="Avatar" className="rounded-circle" />
-                                        </div>
-                                        <div className="chat-contact-info flex-grow-1 ms-4">
-                                            <div className="d-flex justify-content-between align-items-center">
-                                                <h6 className="chat-contact-name text-truncate m-0 fw-normal">{item.agente.nome}</h6>
+                                <>
+                                    <li key={item.idmaster} onClick={(e) => handleToogleBoxCharts(item.idmaster)} className={`chat-contact-list-item mb-1 ${activeBoxChats === item.idmaster ? 'active' : ''} `}>
+                                        <a className="d-flex align-items-center">
+                                            <div className="flex-shrink-0 avatar avatar-online">
 
-                                                <div className="dropdown">
-                                                    <button
-                                                        className="btn btn-icon text-secondary dropdown-toggle hide-arrow"
-                                                        data-bs-toggle="dropdown"
-                                                        aria-expanded="true"
-                                                        id="chat-header-actions">
-                                                        <i className="bx bx-dots-vertical-rounded bx-md"></i>
-                                                    </button>
-                                                    <div className="dropdown-menu dropdown-menu-end" aria-labelledby="chat-header-actions">
-                                                        <a className="dropdown-item" onClick={(e) => { e.preventDefault(); handlExcluirChat(item.idmaster) }}>Excluir</a>
+                                                {item.agente.logo_agente ? (<img src={`http://127.0.0.1:8000/${item.agente.logo_agente}`} alt="Avatar" className="rounded-circle" />) : (<img src={`${process.env.PUBLIC_URL}/static/assets/img/avatars/gpt1.jpg`} alt="Avatar" className="rounded-circle" />)}
+
+                                            </div>
+                                            <div className="chat-contact-info flex-grow-1 ms-4">
+                                                <div className="d-flex justify-content-between align-items-center">
+                                                    <h6 className="chat-contact-name text-truncate m-0 fw-normal">{item.agente.nome}</h6>
+
+                                                    <div className="dropdown">
+                                                        <button
+                                                            className="btn btn-icon text-secondary dropdown-toggle hide-arrow"
+                                                            data-bs-toggle="dropdown"
+                                                            aria-expanded="true"
+                                                            id="chat-header-actions">
+                                                            <i className="bx bx-dots-vertical-rounded bx-md"></i>
+                                                        </button>
+                                                        <div className="dropdown-menu dropdown-menu-end" aria-labelledby="chat-header-actions">
+                                                            <a className="dropdown-item" onClick={(e) => { e.preventDefault(); handlExcluirChat(item.idmaster) }}>Excluir</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </a>
-                                </li>
+                                        </a>
+                                    </li>
+                                </>
                             ))
                         ) : (
                             <li className="chat-contact-list-item">Nenhum agente encontrado</li>

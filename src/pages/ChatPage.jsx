@@ -6,6 +6,8 @@ import { ListaAgentesChat } from '../components/chat/ListaAgentesChat';
 import { HeaderAgente } from '../components/chat/HeaderAgente';
 import { ChatComponent } from '../components/chat/ChatComponent';
 
+import '../styles/chat.css';
+
 
 export const ChatPage = () => {
   const [submitChat, setSubmitChat] = useState();
@@ -17,6 +19,8 @@ export const ChatPage = () => {
   const [headerAgente, setHeaderAgente] = useState(null)
   const [historicoChat, setHistoricoChat] = useState([])
   const [mostrarLoadginPergunta, setMostrarLoadginPergunta] = useState(false)
+  const [mostrarAvaliacaoResposta, setMostrarAvaliacaoResposta] = useState(false)
+  const [arquivo, setArquivo] = useState([])
 
   // Agentes
   useEffect(() => {
@@ -33,14 +37,32 @@ export const ChatPage = () => {
   useEffect(() => {
     const fetchChats = async () => {
       const chat = await listarChats("");
-      console.log(chat)
       setListaChat(chat);
+
+      // Ultimo agente da lista default selecionado
+
+      if (chat.length > 0) {
+        setActiveBoxChats(chat[0].idmaster)
+
+        // Gera Header
+        const objSelecionado = chat.find(item => item.idmaster === chat[0].idmaster)
+        setHeaderAgente(objSelecionado);
+
+        // Recarrega chat historico
+        listaHistoricoChat(objSelecionado);
+
+      }
+
+
     };
 
     fetchChats();
 
   }, []);
 
+  const handleArquivo = (e) => {
+    setArquivo(e.target.files[0])
+  }
 
   const listarAgentes = async (id_agente) => {
     const agente = await apiInstance.get(`v1/agente/${id_agente ? id_agente + "/" : ""}`);
@@ -60,7 +82,7 @@ export const ChatPage = () => {
     const historicoChat = await apiInstance.get(`v1/chat/?idmaster=${id_chat}`);
 
     return Array.isArray(historicoChat.data) ? historicoChat.data : [historicoChat.data]
-  }
+  };
 
 
   const handlExcluirChat = async (index) => {
@@ -81,16 +103,28 @@ export const ChatPage = () => {
 
   const handleSubmitChat = async () => {
 
-    // Usado para preencher de forma prévia o que o usuario perguntou, evitando que so seja carregado junto com a resposta.
+    // Usado para preencher de forma prévia o que o usuario perguntou, evitando que so seja carregado no chat junto com a resposta.
     const obj_usuario_pergunta = {
       "autor": "2",
       "mensagem": message
     }
 
+    const form_obj_agente = new FormData();
+    form_obj_agente.append('idmaster', activeBoxChats);
+    form_obj_agente.append('id_usuario', "1");
+    form_obj_agente.append('id_agente', headerAgente.id_agente);
+    form_obj_agente.append('autor', "2");
+    form_obj_agente.append('mensagem', message);
+
+    if (arquivo) {
+      form_obj_agente.append('arquivo', arquivo);
+    }
+
+
     setHistoricoChat(prevHistorico => [...historicoChat, obj_usuario_pergunta]);
 
     setMostrarLoadginPergunta(true)
-    
+
     setMessage("");
 
     try {
@@ -103,10 +137,11 @@ export const ChatPage = () => {
         "mensagem": message
       }
 
-      await apiInstance.post(`v1/chat/enviarPergunta/`, obj_send_message)
+      await apiInstance.post(`v1/chat/enviarPergunta/`, form_obj_agente)
 
       setMostrarLoadginPergunta(false)
       listaHistoricoChat(headerAgente);
+      setMostrarAvaliacaoResposta(true)
 
     } catch {
       console.log("erro")
@@ -134,7 +169,7 @@ export const ChatPage = () => {
     } catch (erro) {
       console.log(erro)
     }
-  }
+  };
 
 
   const listaHistoricoChat = async (objSelecionado) => {
@@ -156,10 +191,34 @@ export const ChatPage = () => {
       // Recarrega chat historico
       listaHistoricoChat(objSelecionado);
     }
+  };
+
+
+  const handleFiltrarAgente = (index) => {
+    if (index) {
+      const listaFiltrada = listaChat.filter((item) => {
+        return item.agente.nome.toLowerCase().includes(index.toLowerCase())
+      })
+
+      setListaChat(listaFiltrada)
+
+      return true
+    }
+
+    if (!index) {
+      const fetchChats = async () => {
+        const chat = await listarChats("");
+        setListaChat(chat);
+      };
+
+      fetchChats();
+      return true
+    }
   }
 
   return (
     <>
+
       <div className="app-chat card overflow-hidden">
         <div className="row g-0">
           <div
@@ -177,7 +236,9 @@ export const ChatPage = () => {
                     className="form-control chat-search-input"
                     placeholder="Pesquisar..."
                     aria-label="Pesquisar..."
-                    aria-describedby="basic-addon-search31" />
+                    aria-describedby="basic-addon-search31"
+                    onChange={(e) => handleFiltrarAgente(e.target.value)}
+                  />
                 </div>
 
                 <SideBarMenuLeft lista_agentes={listaAgentes} handleAbrirNovoChat={handleAbrirNovoChat} />
@@ -198,29 +259,37 @@ export const ChatPage = () => {
 
               <HeaderAgente headerAgente={headerAgente} />
 
-              <ChatComponent historicoChat={historicoChat} mostrarLoadginPergunta={mostrarLoadginPergunta}/>
+              <ChatComponent
+                historicoChat={historicoChat}
+                mostrarLoadginPergunta={mostrarLoadginPergunta}
+                resposta_avaliada_pelo_usuario={mostrarAvaliacaoResposta}
+                setMostrarAvaliacaoResposta={setMostrarAvaliacaoResposta}
+              />
 
               <div className="chat-history-footer shadow-xs">
+
                 <form className="form-send-message d-flex justify-content-between align-items-center">
                   <input
                     id="input-message-chat"
                     className="form-control message-input border-0 me-4 shadow-none"
                     value={message}
-                    placeholder="O que deseja?"
-                    onChange={(e) => setMessage(e.target.value)} />
+                    placeholder={mostrarAvaliacaoResposta ? "Avalie para perguntar novamente" : "O que deseja?"}
+                    onChange={(e) => setMessage(e.target.value)}
+                    disabled={mostrarAvaliacaoResposta} />
+
                   <div className="message-actions d-flex align-items-center">
 
                     {/*
                         <i
                           className="speech-to-text bx bx-microphone bx-md btn btn-icon cursor-pointer text-heading"></i>
-                    
+                    */}
 
-                        <label htmlhtmlFor="attach-doc" className="form-label mb-0">
-                          <i className="bx bx-paperclip bx-md cursor-pointer btn btn-icon mx-1 text-heading"></i>
-                          <input type="file" id="attach-doc" hidden />
-                        </label>
-                          */}
-                    <button onClick={(e) => { e.preventDefault(); handleSubmitChat(); }} className="btn btn-primary d-flex send-msg-btn">
+                    <label htmlFor="attach-doc" className="form-label mb-0">
+                      <i className="bx bx-paperclip bx-md cursor-pointer btn btn-icon mx-1 text-heading"></i>
+                      <input type="file" name="arquivo_upload" onChange={(e) => handleArquivo(e)} id="attach-doc" hidden />
+                    </label>
+
+                    <button onClick={(e) => { e.preventDefault(); handleSubmitChat(); }} disabled={mostrarAvaliacaoResposta} className="btn btn-primary d-flex send-msg-btn">
                       <span className="align-middle d-md-inline-block d-none">Enviar</span>
                       <i className="bx bx-paper-plane bx-sm ms-md-2 ms-0"></i>
                     </button>
@@ -229,12 +298,6 @@ export const ChatPage = () => {
               </div>
             </div>
           </div>
-
-
-
-
-
-
 
           <div className="col app-chat-sidebar-right app-sidebar overflow-hidden" id="app-chat-sidebar-right">
             <div

@@ -1,19 +1,21 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import apiInstance from './utils/api-instance';
 
 function Login() {
-  const [customers, setCustomers] = useState([]);
+  const [login, setLogin] = useState("");
+  const [senha, setSenha] = useState("");
 
-  /*
-  useEffect(() => {
-    const loadData = () => {
-      fetch('http://localhost:8000/api/process-api/')
-      .then(response => response.json())
-      .then(data => setCustomers(data))
+  const handleSubmitLogin = async (e) => {
+    e.preventDefault(); // Certifique-se de prevenir o comportamento padrão do formulário
+    const form_data = {
+      username: login,
+      password: senha
     }
-    loadData();
-  }, [])
-  */
+
+    await apiInstance.post("v1/usuario/auth_user/", form_data)
+    
+  }
 
   return (
     <div className="App">
@@ -36,17 +38,18 @@ function Login() {
           <div className="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg p-sm-12 p-6">
             <div className="w-px-400 mx-auto mt-12 pt-5">
               <h4 className="mb-1">IRKO IA</h4>
-              <p className="mb-6">Para acessar, basta inserir seu login e senha</p>
+              <p className="mb-6">Para acessar, basta inserir o login e senha da sua máquina. </p>
 
-              <form id="formAuthentication" className="mb-6" action="index.html" method="GET">
+              <form id="formAuthentication" className="mb-6" onSubmit={handleSubmitLogin}>
                 <div className="mb-6">
-                  <label htmlFor="email" className="form-label">Email ou usuário</label>
+                  <label htmlFor="username" className="form-label">Login</label>
                   <input
                     type="text"
                     className="form-control"
-                    id="email"
-                    name="email-username"
-                    placeholder="Enter your email or username"
+                    id="username"
+                    name="username"
+                    onChange={(e) => setLogin(e.target.value)}
+                    required
                     autoFocus />
                 </div>
                 <div className="mb-6 form-password-toggle">
@@ -58,12 +61,13 @@ function Login() {
                       className="form-control"
                       name="password"
                       placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                      onChange={(e) => setSenha(e.target.value)}
+                      required
                       aria-describedby="password" />
-                    <span className="input-group-text cursor-pointer"><i className="bx bx-hide"></i></span>
                   </div>
                 </div>                
 
-                <button className="btn btn-primary d-grid w-100">Entrar</button>
+                <button type="submit" className="btn btn-primary d-grid w-100">Entrar</button>
               </form>      
 
             </div>
