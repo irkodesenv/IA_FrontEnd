@@ -96,7 +96,7 @@ const Menu = () => {
             <ul className="menu-inner py-1">
 
                 <li className={`menu-item ${activeSubIndex === 0 ? 'active' : ''}`}>
-                    <Link to="/Chat" onClick={() => {setActiveSubItem(0); toggleItem(0)}} className="menu-link">
+                    <Link to="/IA/Chat" onClick={() => {setActiveSubItem(0); toggleItem(0)}} className="menu-link">
                         <i className="menu-icon tf-icons bx bx-chat"></i>
                         <div className="text-truncate" data-i18n="Chat">Chat</div>
                     </Link>
@@ -178,12 +178,12 @@ const Menu = () => {
                     </a>
                     <ul className={`menu-sub ${openIndex === 1 ? 'show' : ''}`}>
                         <li className={`menu-item ${activeSubIndex === 5 ? 'active' : ''}`}>
-                            <Link to="/agentes" onClick={() => setActiveSubItem(5)} className="menu-link">
+                            <Link to="/IA/agentes" onClick={() => setActiveSubItem(5)} className="menu-link">
                                 <div className="text-truncate" data-i18n="Agentes">Agentes</div>
                             </Link>
                         </li>
                         <li className={`menu-item ${activeSubIndex === 6 ? 'active' : ''}`}>
-                            <Link to="/usuarios" onClick={() => setActiveSubItem(6)} className="menu-link">
+                            <Link to="/IA/usuarios" onClick={() => setActiveSubItem(6)} className="menu-link">
                                 <div className="text-truncate" data-i18n="Usuários">Usuários</div>
                             </Link>
                         </li>                   
