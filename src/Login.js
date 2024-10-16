@@ -10,7 +10,7 @@ function Login() {
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
   
-    fetch('http://127.0.0.1:8000/api/v1/token/', {
+    fetch('http://10.11.100.122:8010/api/v1/token/', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ function Login() {
         localStorage.setItem('access_token', data.access);
         localStorage.setItem('refresh_token', data.refresh);
         
-        window.location.href = '/Chat'; 
+        window.location.href = '/IA/Chat'; 
       } else {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
