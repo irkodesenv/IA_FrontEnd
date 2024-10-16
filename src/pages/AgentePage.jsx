@@ -30,6 +30,7 @@ export const AgentePage = () => {
         { value: '1', label: 'IRKO - SP' },
         { value: '2', label: 'IRKO - RJ' },
         { value: '3', label: 'IRKO - BPS' },
+        { value: '4', label: 'IRKO - CAMPINAS' }
     ];
 
     const options_departamentos = [
@@ -167,6 +168,8 @@ export const AgentePage = () => {
                                                         <option value="1">DCTF</option>
                                                         <option value="1">Folha</option>
                                                         <option value="1">Fiscal</option>
+                                                        <option value="1">RH</option>
+                                                        <option value="1">Administrativo</option>
                                 
                                                     </select>
                                             </div>  

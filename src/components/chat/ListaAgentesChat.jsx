@@ -49,6 +49,9 @@ export const ListaAgentesChat = ({ lista_chat, handlExcluirChat, handleToogleBox
                     }
 
                 </ul>
+
+                {/*
+
                 <ul className="list-unstyled chat-contact-list mb-0 py-2" id="contact-list">
                     <li className="chat-contact-list-item chat-contact-list-item-title mt-0">
                         <h5 className="text-primary mb-0">Fiscal</h5>
@@ -80,6 +83,8 @@ export const ListaAgentesChat = ({ lista_chat, handlExcluirChat, handleToogleBox
                     </li>
 
                 </ul>
+
+                */}
             </div>
 
         </>

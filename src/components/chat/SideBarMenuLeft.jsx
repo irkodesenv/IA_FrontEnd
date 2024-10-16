@@ -80,7 +80,9 @@ const SideBarMenuLeft = ({ lista_agentes, handleAbrirNovoChat }) => {
                                 <option value="usa">Financeiro</option>
                                 <option value="uk">Fiscal</option>
                                 <option value="france">DCTF</option>
+                                <option value="france">RH</option>                                
                                 <option value="australia">Contábil</option>
+                                <option value="france">Administrativo</option>
                             </select>
                         </div>
 

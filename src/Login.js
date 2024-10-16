@@ -71,7 +71,7 @@ function Login() {
 
               <form id="formAuthentication" className="mb-6" onSubmit={handleSubmitLogin}>
                 <div className="mb-6">
-                  <label htmlFor="username" className="form-label">Login</label>
+                  <label htmlFor="username" className="form-label" style={{fontSize: 16}}>Login</label>
                   <input
                     type="text"
                     className="form-control"
@@ -82,14 +82,13 @@ function Login() {
                     autoFocus />
                 </div>
                 <div className="mb-6 form-password-toggle">
-                  <label className="form-label" htmlFor="password">Senha</label>
+                  <label className="form-label" htmlFor="password" style={{fontSize: 16}}>Senha</label>
                   <div className="input-group input-group-merge">
                     <input
                       type="password"
                       id="password"
                       className="form-control"
                       name="password"
-                      placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                       onChange={(e) => setSenha(e.target.value)}
                       required
                       aria-describedby="password" />
