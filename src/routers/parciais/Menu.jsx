@@ -81,7 +81,7 @@ const Menu = () => {
             onMouseLeave={handleMouseLeave}>
 
             <div className="app-brand demo" style={{ paddingLeft: '20px' }}>               
-                 <Link to="/" className="app-brand-link">
+                 <Link to={`${process.env.REACT_APP_BASE_PATH}/`} className="app-brand-link">
                     <img src={`${process.env.PUBLIC_URL}/static/assets/img/logos/156.png`} width='45px' style={{ marginRight: '10px' }} />
                     <span className="app-brand-text demo menu-text fw-bold ms-2">IRKO</span>
                  </Link>              
@@ -96,7 +96,7 @@ const Menu = () => {
             <ul className="menu-inner py-1">
 
                 <li className={`menu-item ${activeSubIndex === 0 ? 'active' : ''}`}>
-                    <Link to="/IA/Chat" onClick={() => {setActiveSubItem(0); toggleItem(0)}} className="menu-link">
+                    <Link to={`${process.env.REACT_APP_BASE_PATH}/Chat`} onClick={() => {setActiveSubItem(0); toggleItem(0)}} className="menu-link">
                         <i className="menu-icon tf-icons bx bx-chat"></i>
                         <div className="text-truncate" data-i18n="Chat">Chat</div>
                     </Link>
@@ -178,12 +178,12 @@ const Menu = () => {
                     </a>
                     <ul className={`menu-sub ${openIndex === 1 ? 'show' : ''}`}>
                         <li className={`menu-item ${activeSubIndex === 5 ? 'active' : ''}`}>
-                            <Link to="/IA/agentes" onClick={() => setActiveSubItem(5)} className="menu-link">
+                            <Link to={`${process.env.REACT_APP_BASE_PATH}/agentes`} onClick={() => setActiveSubItem(5)} className="menu-link">
                                 <div className="text-truncate" data-i18n="Agentes">Agentes</div>
                             </Link>
                         </li>
                         <li className={`menu-item ${activeSubIndex === 6 ? 'active' : ''}`}>
-                            <Link to="/IA/usuarios" onClick={() => setActiveSubItem(6)} className="menu-link">
+                            <Link to={`${process.env.REACT_APP_BASE_PATH}/usuarios`} onClick={() => setActiveSubItem(6)} className="menu-link">
                                 <div className="text-truncate" data-i18n="Usuários">Usuários</div>
                             </Link>
                         </li>                   

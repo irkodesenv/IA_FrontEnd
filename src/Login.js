@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import apiInstance from './utils/api-instance';
 
 function Login() {
   const [login, setLogin] = useState("");
@@ -9,8 +8,9 @@ function Login() {
 
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
-  
-    fetch('http://10.11.100.122:8010/api/v1/token/', {
+    var path_get_token = process.env.REACT_APP_BASE_PATH_API
+
+    fetch(path_get_token += "/v1/token/", {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
@@ -35,8 +35,9 @@ function Login() {
         // Armazena o token JWT no localStorage ou sessionStorage
         localStorage.setItem('access_token', data.access);
         localStorage.setItem('refresh_token', data.refresh);
-        
-        window.location.href = '/IA/Chat'; 
+
+        var path_location = `${process.env.REACT_APP_BASE_PATH}/Chat`
+        window.location.href = path_location; 
       } else {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
@@ -55,7 +56,7 @@ function Login() {
           <div className="d-none d-lg-flex col-lg-7 col-xl-8 align-items-center p-5">
             <div className="w-100 d-flex justify-content-center">
               <img
-                src="./static/assets/img/illustrations/IA.png"
+                src="./IA/static/assets/img/illustrations/IA.png"
                 className="img-fluid"
                 alt="Login image"
                 width="950"
