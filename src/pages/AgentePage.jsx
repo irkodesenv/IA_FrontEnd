@@ -11,7 +11,15 @@ export const AgentePage = () => {
     const { register, handleSubmit, setValue, formState: { errors } } = useForm();
 
     const [statusNotificacao, setStatusNotificacao] = useState(false);
+    const [tipoNotificacao, setTipoNotificacao] = useState("");
+    const [textoNotificacao, setTextoNotificacao] = useState("")
+
+
     const [acceptedFiles, setAcceptedFiles] = useState([]);
+
+
+
+
 
     const handleFileChange = (acceptedFiles) => {
         setValue('base_conhecimento', acceptedFiles);
@@ -89,7 +97,9 @@ export const AgentePage = () => {
 
             await apiInstance.post(`v1/agente/`, form_obj_agente)
 
-            setStatusNotificacao(true)
+            setStatusNotificacao(true)            
+            setTipoNotificacao("success")
+            setTextoNotificacao("Agente cadastrado com sucesso!")
 
         } catch (error) {
 
@@ -163,17 +173,17 @@ export const AgentePage = () => {
                                             <div className="col-md-2">
                                                 <label htmlFor="tokens_maximos_agente" className="form-label">Tipo agente</label>
                                                 <select id="select-clientes" name="select-clientes" class="select2 form-select" data-allow-clear="true">
-                                                        <option value="">Selecione</option>
-                                                        <option value="1">Financeiro</option>
-                                                        <option value="1">DCTF</option>
-                                                        <option value="1">Folha</option>
-                                                        <option value="1">Fiscal</option>
-                                                        <option value="1">RH</option>
-                                                        <option value="1">Administrativo</option>
-                                
-                                                    </select>
-                                            </div>  
-                                           
+                                                    <option value="">Selecione</option>
+                                                    <option value="1">Financeiro</option>
+                                                    <option value="1">DCTF</option>
+                                                    <option value="1">Folha</option>
+                                                    <option value="1">Fiscal</option>
+                                                    <option value="1">RH</option>
+                                                    <option value="1">Administrativo</option>
+
+                                                </select>
+                                            </div>
+
                                             <div className="col-md-1">
                                                 <label htmlFor="tokens_maximos_agente" className="form-label">Token Maximo</label>
                                                 <input
@@ -188,7 +198,7 @@ export const AgentePage = () => {
                                             </div>
 
 
-                                             
+
                                         </div>
 
                                         <div className="row card-padding-30 mt-3">
@@ -226,12 +236,14 @@ export const AgentePage = () => {
                                                         {...getRootProps()}
                                                         className="dropzone needsclick"
                                                         id="dropzone-multi"
-                                                        style={{ position: 'relative', textAlign: 'center' }}
+                                                        style={{ position: 'relative', textAlign: 'center', minHeight: '200px' }}
                                                     >
                                                         <input
                                                             name="base_conhecimento"
                                                             {...register('base_conhecimento')}
-                                                            {...getInputProps()}
+                                                            {...getInputProps({
+                                                                accept: ".txt,.doc,.docx", // Apenas permite arquivos .txt e .docx
+                                                            })}
                                                         />
 
                                                         {/* Se nenhum arquivo estiver selecionado, exibe o ícone e o texto */}
@@ -245,40 +257,49 @@ export const AgentePage = () => {
                                                         {/* Se houver arquivos, exibe-os dentro do dropzone */}
                                                         {acceptedFiles.length > 0 && (
                                                             <div className="file-preview-container">
-                                                                {acceptedFiles.map(file => (
-                                                                    <div key={file.name} className="file-preview">
-                                                                        {file.type.startsWith('image/') ? (
-                                                                            <img
-                                                                                src={URL.createObjectURL(file)}
-                                                                                alt={file.name}
-                                                                                className="file-thumbnail"
-                                                                            />
-                                                                        ) : (
-                                                                            <FaFileAlt size={40} />
-                                                                        )}
-                                                                        <p className="file-name">{file.name}</p>
-                                                                        <button
-                                                                            type="button"
-                                                                            className="remove-file-button"
-                                                                            onClick={(e) => {
-                                                                                e.stopPropagation();
-                                                                                handleRemoveFile(file.name);
-                                                                            }}
-                                                                        >
-                                                                            <FaTrashAlt />
-                                                                        </button>
-                                                                    </div>
-                                                                ))}
+                                                                {acceptedFiles.map((file) => {
+                                                                    const isValidFile =
+                                                                        file.type === 'text/plain' ||
+                                                                        file.type ===
+                                                                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || // .docx MIME type
+                                                                        file.type === 'application/msword'; // .doc MIME type
+                                                                    console.log("aaa")
+                                                                    return (
+                                                                        <div key={file.name} className="file-preview">
+                                                                            {isValidFile ? (
+                                                                                <>
+                                                                                    <FaFileAlt size={40} />
+                                                                                    <p className="file-name">{file.name}</p>
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        className="remove-file-button"
+                                                                                        onClick={(e) => {
+                                                                                            e.stopPropagation();
+                                                                                            handleRemoveFile(file.name);
+                                                                                        }}
+                                                                                    >
+                                                                                        <FaTrashAlt />
+                                                                                    </button>
+                                                                                </>
+                                                                            ) : (
+                                                                                handleRemoveFile(file.name),
+                                                                                setStatusNotificacao(true),
+                                                                                setTipoNotificacao("danger"),
+                                                                                setTextoNotificacao("Permitido apenas TXT ou Word")
+                                                                                )}
+                                                                        </div>
+                                                                    );
+                                                                })}
                                                             </div>
                                                         )}
                                                     </div>
+
                                                     {errors?.base_conhecimento && (
-                                                        <p className="input-error-message">
-                                                            Selecione pelo menos um arquivo.
-                                                        </p>
+                                                        <p className="input-error-message">Selecione pelo menos um arquivo.</p>
                                                     )}
                                                 </div>
                                             </div>
+
                                         </div>
 
 
@@ -440,9 +461,9 @@ export const AgentePage = () => {
 
             <NotificacaoSuperior
                 show={statusNotificacao}
-                tipo={"success"}
+                tipo={tipoNotificacao}
                 titulo={"Agente"}
-                texto={"Agente criado com sucesso!"}
+                texto={textoNotificacao}
                 setStatusNotificacao={setStatusNotificacao}
             />
         </>

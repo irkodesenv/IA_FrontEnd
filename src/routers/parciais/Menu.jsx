@@ -182,11 +182,13 @@ const Menu = () => {
                                 <div className="text-truncate" data-i18n="Agentes">Agentes</div>
                             </Link>
                         </li>
+                        {/* 
                         <li className={`menu-item ${activeSubIndex === 6 ? 'active' : ''}`}>
                             <Link to={`${process.env.REACT_APP_BASE_PATH}/usuarios`} onClick={() => setActiveSubItem(6)} className="menu-link">
                                 <div className="text-truncate" data-i18n="Usuários">Usuários</div>
                             </Link>
-                        </li>                   
+                        </li>
+                        */}                   
                     </ul>
                 </li>
             </ul>
