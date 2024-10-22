@@ -80,7 +80,7 @@ const SideBarMenuLeft = ({ lista_agentes, handleAbrirNovoChat }) => {
                                 <option value="usa">Financeiro</option>
                                 <option value="uk">Fiscal</option>
                                 <option value="france">DCTF</option>
-                                <option value="france">RH</option>                                
+                                <option value="france">RH</option>
                                 <option value="australia">Contábil</option>
                                 <option value="france">Administrativo</option>
                             </select>
@@ -119,8 +119,8 @@ const SideBarMenuLeft = ({ lista_agentes, handleAbrirNovoChat }) => {
                 data-bs-toggle="sidebar"
                 data-overlay="app-overlay-ex"
                 onClick={handleToggleBuscarChats}
-                style={{ marginTop: 17, marginLeft: 10 }}>
-                <i className="menu-icon tf-icons bx bxs-plus-circle"></i>
+                style={{ marginTop: 10, marginLeft: 10, color: '#696cff' }}>
+                <i className="menu-icon tf-icons bx bxs-plus-circle" style={{ fontSize: '32px', marginRight: '0px' }}></i>
             </div>
         </>
     )
