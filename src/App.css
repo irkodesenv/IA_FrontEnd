@@ -13,6 +13,16 @@
   }
 }
 
+.input-icon {
+  color: #007bff; /* Cor do ícone */
+  font-size: 24px; /* Tamanho do ícone */
+}
+
+.form-send-message {
+  width: 100%;
+}
+
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

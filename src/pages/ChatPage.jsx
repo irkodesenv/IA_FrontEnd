@@ -21,6 +21,7 @@ export const ChatPage = () => {
   const [mostrarLoadginPergunta, setMostrarLoadginPergunta] = useState(false)
   const [mostrarAvaliacaoResposta, setMostrarAvaliacaoResposta] = useState(false)
   const [arquivo, setArquivo] = useState([])
+  const [feitoUpload, setfeitoUpload] = useState(false);
 
   // Agentes
   useEffect(() => {
@@ -60,9 +61,26 @@ export const ChatPage = () => {
 
   }, []);
 
+
   const handleArquivo = (e) => {
-    setArquivo(e.target.files[0])
+    let tipo_arquivo_upload = e.target.files[0].type
+
+    let tipo_arquivos_permitidos = [
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/plain",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    ]
+
+    if (!tipo_arquivos_permitidos.includes(tipo_arquivo_upload)){
+      alert("Permitido somente Word e Txt no momento.");
+      return;
+    }
+
+    const arquivos_selecionados = Array.from(e.target.files);
+    setfeitoUpload(true);
+    setArquivo(arquivos_selecionados);
   }
+
 
   const listarAgentes = async (id_agente) => {
     const agente = await apiInstance.get(`v1/agente/${id_agente ? id_agente + "/" : ""}`);
@@ -102,6 +120,10 @@ export const ChatPage = () => {
 
 
   const handleSubmitChat = async () => {
+  
+    if (!message && arquivo.length === 0) {
+      return;
+    }
 
     // Usado para preencher de forma prévia o que o usuario perguntou, evitando que so seja carregado no chat junto com a resposta.
     const obj_usuario_pergunta = {
@@ -115,11 +137,14 @@ export const ChatPage = () => {
     form_obj_agente.append('id_agente', headerAgente.id_agente);
     form_obj_agente.append('autor', "2");
     form_obj_agente.append('mensagem', message);
-
+    
     if (arquivo) {
-      form_obj_agente.append('arquivo', arquivo);
-    }
+      arquivo.forEach((file, index) => {
+        form_obj_agente.append(`arquivo_upload_${index}`, file);
+      });
 
+      setMessage("Arquivo")
+    }
 
     setHistoricoChat(prevHistorico => [...historicoChat, obj_usuario_pergunta]);
 
@@ -128,7 +153,6 @@ export const ChatPage = () => {
     setMessage("");
 
     try {
-
       const obj_send_message = {
         "idmaster": activeBoxChats,
         "id_usuario": "1",
@@ -145,7 +169,6 @@ export const ChatPage = () => {
 
     } catch {
       console.log("erro")
-
     }
   };
 
@@ -283,18 +306,27 @@ export const ChatPage = () => {
                         <i
                           className="speech-to-text bx bx-microphone bx-md btn btn-icon cursor-pointer text-heading"></i>
                     */}
-
-                    <label htmlFor="attach-doc" className="form-label mb-0">
-                      <i className="bx bx-paperclip bx-md cursor-pointer btn btn-icon mx-1 text-heading"></i>
-                      <input type="file" name="arquivo_upload" onChange={(e) => handleArquivo(e)} id="attach-doc" hidden />
-                    </label>
-
+                      {
+                        feitoUpload ? (
+                          <label htmlFor="attach-doc" className="form-label mb-0">
+                            <i className="bx bx-check-circle bx-md text-success bx-md cursor-pointer btn btn-icon mx-1"></i>
+                            <input type="file" name="arquivo_upload" onChange={(e) => handleArquivo(e)} id="attach-doc" hidden />
+                          </label>
+                        ) : (
+                          <label htmlFor="attach-doc" className="form-label mb-0">
+                            <i className="bx bx-paperclip bx-md cursor-pointer btn btn-icon mx-1 text-heading"></i>
+                            <input type="file" name="arquivo_upload" onChange={(e) => handleArquivo(e)} id="attach-doc" hidden />
+                          </label>
+                        )
+                      }                   
                     <button onClick={(e) => { e.preventDefault(); handleSubmitChat(); }} disabled={mostrarAvaliacaoResposta} className="btn btn-primary d-flex send-msg-btn">
                       <span className="align-middle d-md-inline-block d-none">Enviar</span>
                       <i className="bx bx-paper-plane bx-sm ms-md-2 ms-0"></i>
                     </button>
                   </div>
                 </form>
+
+
               </div>
             </div>
           </div>
