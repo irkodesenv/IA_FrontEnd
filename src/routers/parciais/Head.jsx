@@ -29,6 +29,16 @@ const Head = () => {
   };
 
 
+  const handleLogoff = () => {
+    // Remove os tokens do localStorage
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+  
+    // Redireciona o usuário para a página de login
+    window.location.href = `/Login`;
+  };
+   
+
   return (
 
       <nav
@@ -480,7 +490,7 @@ const Head = () => {
                   <div className="dropdown-divider my-1"></div>
                 </li>   */}
                 <li>
-                  <a className="dropdown-item" href="auth-login-cover.html">
+                  <a className="dropdown-item" href="#" onClick={handleLogoff}>
                     <i className="bx bx-power-off bx-md me-3"></i><span>Sair</span>
                   </a>
                 </li>

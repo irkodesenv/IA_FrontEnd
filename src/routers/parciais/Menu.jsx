@@ -102,75 +102,6 @@ const Menu = () => {
                     </Link>
                 </li>
 
-                {/*
-                <li className={`menu-item ${openIndex === 0 ? 'open' : ''} ${activeIndex === 0 ? 'active' : ''}`}>
-                    
-                    <a href="#" onClick={(e) => { e.preventDefault(); toggleItem(0); }} className="menu-link menu-toggle">
-                        <i className="menu-icon tf-icons bx bx-chat"></i>
-                        <div className="text-truncate" data-i18n="Chat">Chat</div>
-                    </a>                 
-
-                    <ul className={`menu-sub ${openIndex === 0 ? 'show' : ''}`}>
-
-                        <li className={`menu-item ${openSubIndex === 0 ? 'open' : ''} ${activeSubIndex === 0 ? 'active' : ''}`}>
-                            <a href="#" onClick={(e) => { e.preventDefault(); toggleSubItem(0); }} className="menu-link menu-toggle">
-                                <div className="text-truncate" data-i18n="Financeiro">Financeiro</div>
-                            </a>
-
-                            <ul className={`menu-sub ${openSubIndex === 0 ? 'show' : ''}`}>
-                                <li className={`menu-item ${activeSubIndex === 0 ? 'active' : ''}`}>
-                                    <Link to="/Chat" onClick={() => setActiveSubItem(0)} className="menu-link">
-                                        <div className="text-truncate" data-i18n="Extrato">Extrato</div>
-                                    </Link>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li className={`menu-item ${openSubIndex === 1 ? 'open' : ''} ${activeSubIndex === 1 ? 'active' : ''}`}>
-                            <a href="#" onClick={(e) => { e.preventDefault(); toggleSubItem(1); }} className="menu-link menu-toggle">
-                                <div className="text-truncate" data-i18n="Fiscal">Fiscal</div>
-                            </a>
-
-                            <ul className={`menu-sub ${openSubIndex === 1 ? 'show' : ''}`}>
-                                <li className={`menu-item ${activeSubIndex === 1 ? 'active' : ''}`}>
-                                    <Link to="/Chat" onClick={() => setActiveSubItem(1)} className="menu-link">
-                                        <div className="text-truncate" data-i18n="Escriturar">Escriturar</div>
-                                    </Link>
-                                </li>
-                            </ul>
-                        </li>
-                        
-                        <li className={`menu-item ${openSubIndex === 2 ? 'open' : ''} ${activeSubIndex === 2 ? 'active' : ''}`}>
-                            <a href="#" onClick={(e) => { e.preventDefault(); toggleSubItem(2); }} className="menu-link menu-toggle">
-                                <div className="text-truncate" data-i18n="Contabil">Contabil</div>
-                            </a>
-
-                            <ul className={`menu-sub ${openSubIndex === 2 ? 'show' : ''}`}>
-                                <li className={`menu-item ${activeSubIndex === 2 ? 'active' : ''}`}>
-                                    <Link to="/Chat" onClick={() => setActiveSubItem(2)} className="menu-link">
-                                        <div className="text-truncate" data-i18n="Balanço">Balanço</div>
-                                    </Link>
-                                </li>
-                            </ul>
-                        </li>
-                        
-                        <li className={`menu-item ${openSubIndex === 3 ? 'open' : ''} ${activeSubIndex === 3 ? 'active' : ''}`}>
-                            <a href="#" onClick={(e) => { e.preventDefault(); toggleSubItem(3); }} className="menu-link menu-toggle">
-                                <div className="text-truncate" data-i18n="DCTF">DCTF</div>
-                            </a>
-
-                            <ul className={`menu-sub ${openSubIndex === 3 ? 'show' : ''}`}>
-                                <li className={`menu-item ${activeSubIndex === 3 ? 'active' : ''}`}>
-                                    <Link to="/Chat" onClick={() => setActiveSubItem(3)} className="menu-link">
-                                        <div className="text-truncate" data-i18n="Apurar">Apurar</div>
-                                    </Link>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                */}
-
                 <li className={`menu-item ${openIndex === 1 ? 'open' : ''} ${activeIndex === 1 ? 'active' : ''}`}>
                     <a href="#" onClick={(e) => { e.preventDefault(); toggleItem(1); }} className="menu-link menu-toggle">
                         <i className="menu-icon tf-icons bx bx-brightness"></i>
@@ -181,14 +112,7 @@ const Menu = () => {
                             <Link to={`${process.env.REACT_APP_BASE_PATH}/agentes`} onClick={() => setActiveSubItem(5)} className="menu-link">
                                 <div className="text-truncate" data-i18n="Agentes">Agentes</div>
                             </Link>
-                        </li>
-                        {/* 
-                        <li className={`menu-item ${activeSubIndex === 6 ? 'active' : ''}`}>
-                            <Link to={`${process.env.REACT_APP_BASE_PATH}/usuarios`} onClick={() => setActiveSubItem(6)} className="menu-link">
-                                <div className="text-truncate" data-i18n="Usuários">Usuários</div>
-                            </Link>
-                        </li>
-                        */}                   
+                        </li>                                       
                     </ul>
                 </li>
             </ul>

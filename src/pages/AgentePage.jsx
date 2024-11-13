@@ -9,16 +9,13 @@ import NotificacaoSuperior from '../components/utils/NotificacaoSuperior';
 
 export const AgentePage = () => {
     const { register, handleSubmit, setValue, formState: { errors } } = useForm();
-
     const [statusNotificacao, setStatusNotificacao] = useState(false);
     const [tipoNotificacao, setTipoNotificacao] = useState("");
     const [textoNotificacao, setTextoNotificacao] = useState("")
-
-
     const [acceptedFiles, setAcceptedFiles] = useState([]);
-
-
-
+    const [options_departamentos, setOptionsDepartamento] = useState([]);
+    const [options_empresas, setOptionsEmpresas] = useState([]);
+    const [select_tipo_agente, selectTipoAgente] = useState([]);
 
 
     const handleFileChange = (acceptedFiles) => {
@@ -34,47 +31,112 @@ export const AgentePage = () => {
         onDrop: handleFileChange,
     });
 
-    const options_empresas = [
-        { value: '1', label: 'IRKO - SP' },
-        { value: '2', label: 'IRKO - RJ' },
-        { value: '3', label: 'IRKO - BPS' },
-        { value: '4', label: 'IRKO - CAMPINAS' }
-    ];
+    const handleEmpresaChange = async () => {
+        const selectedOptions = Array.from(
+            document.getElementById('picker_empresas').selectedOptions,
+            option => parseInt(option.value, 10)  // Converte cada valor para inteiro
+        );
+    
+        if (selectedOptions.length < 1) {
+            return;
+        }
+    
+        const options_departamentos = await apiInstance.get(`v1/empresa/departamentos/?id_empresa=${JSON.stringify(selectedOptions)}`);
+        const departamentos = Array.isArray(options_departamentos.data) ? options_departamentos.data : [options_departamentos.data]
 
-    const options_departamentos = [
-        { value: '1', label: 'Financeiro' },
-        { value: '2', label: 'DCTF' },
-        { value: '3', label: 'Contábil' },
-    ];
+        setOptionsDepartamento(departamentos)
+    };
+
 
     // Função para atualizar as opções no selectpicker
     const updateSelectpickerOptions = () => {
         if (window.$) {
             const $select_empresas = window.$('#picker_empresas');
-            const $options_departamentos = window.$('#picker_departamentos');
+            //const $options_departamentos = window.$('#picker_departamentos');
+            const $select_tipo_agente = window.$('#select_tipo_agente');
+
+            $select_empresas.selectpicker('destroy');
+            //$options_departamentos.selectpicker('destroy');
 
             $select_empresas.empty();
-            $options_departamentos.empty();
+            //$options_departamentos.empty();
 
             options_empresas.forEach(option => {
-                $select_empresas.append(new Option(option.label, option.value));
+                $select_empresas.append(new Option(option.razao_social, option.id));
             });
 
-            options_departamentos.forEach(option => {
-                $options_departamentos.append(new Option(option.label, option.value));
+            //options_departamentos.forEach(option => {
+               // $options_departamentos.append(new Option(option.nome, option.id));
+            //});
+
+            select_tipo_agente.forEach(option => {
+                $select_tipo_agente.append(new Option(option.nome, option.id));
             });
 
-            $options_departamentos.selectpicker('refresh');
-            $select_empresas.selectpicker('refresh');
+            //$options_departamentos.selectpicker('render');
+            $select_empresas.selectpicker('render');
+
+            // Se houver clique de seleção, vai atualizar os departamentos de cada empresa
+            $select_empresas.on('changed.bs.select', handleEmpresaChange);
         }
     };
 
-    useEffect(() => {
+
+    const updateSelectDepartamentos = () => {
+        if (window.$) {
+            const $select_empresas = window.$('#picker_empresas');
+            const $options_departamentos = window.$('#picker_departamentos');
+            $options_departamentos.selectpicker('destroy');          
+            $options_departamentos.empty();
+
+            options_departamentos.forEach(option => {
+                $options_departamentos.append(new Option(option.sigla_empresa + " - " + option.nome, option.id));
+            });
+
+            $options_departamentos.selectpicker('render');
+        }
+    };
+    
+    useEffect(() => {        
+        const fetchEmpresas = async () => {
+            const empresas = await listarEmpresas("");
+            setOptionsEmpresas(empresas);
+        };
+        fetchEmpresas();
+
+        const fetchTipoAgente = async () => {
+            const tipo_agente = await listarTipoAgentes("");
+            selectTipoAgente(tipo_agente);
+        };
+
+        fetchTipoAgente();
+
         if (window.$) {
             window.$('.selectpicker').selectpicker();
         }
-        updateSelectpickerOptions();
     }, []);
+
+    // Picker Departamento e empresa
+    useEffect(() => {
+        updateSelectpickerOptions();
+    }, [options_empresas, select_tipo_agente])
+
+
+    useEffect(() => {
+        updateSelectDepartamentos()
+    }, [options_departamentos])
+
+
+    const listarEmpresas = async (id_empresa) => {
+        const empresa = await apiInstance.get(`v1/empresa/empresa/${id_empresa ? id_empresa + "/" : ""}`);
+        return Array.isArray(empresa.data) ? empresa.data : [empresa.data]
+    };
+
+
+    const listarTipoAgentes = async (id_tipo_agente) => {
+        const tipo_agente = await apiInstance.get(`v1/agente/tipoAgente/${id_tipo_agente ? id_tipo_agente + "/" : ""}`);
+        return Array.isArray(tipo_agente.data) ? tipo_agente.data : [tipo_agente.data]
+    };
 
 
     const handleSubmitAgente = async (data) => {
@@ -84,6 +146,14 @@ export const AgentePage = () => {
             form_obj_agente.append('nome', data.nome_agente);
             form_obj_agente.append('descritivo', data.descricao_agente);
             form_obj_agente.append('max_token', data.tokens_maximos_agente);
+            form_obj_agente.append('tipo', data.select_tipo_agente);
+            
+            // Adiciona cada ID de departamento individualmente
+            if (data.picker_departamentos && Array.isArray(data.picker_departamentos)) {
+                data.picker_departamentos.forEach((id) => {
+                    form_obj_agente.append('picker_departamentos', id);
+                });
+            }
 
             if (data.logo_agente && data.logo_agente.length > 0) {
                 form_obj_agente.append('logo_agente', data.logo_agente[0]);
@@ -97,7 +167,7 @@ export const AgentePage = () => {
 
             await apiInstance.post(`v1/agente/`, form_obj_agente)
 
-            setStatusNotificacao(true)            
+            setStatusNotificacao(true)
             setTipoNotificacao("success")
             setTextoNotificacao("Agente cadastrado com sucesso!")
 
@@ -171,16 +241,19 @@ export const AgentePage = () => {
                                             </div>
 
                                             <div className="col-md-2">
-                                                <label htmlFor="tokens_maximos_agente" className="form-label">Tipo agente</label>
-                                                <select id="select-clientes" name="select-clientes" class="select2 form-select" data-allow-clear="true">
+                                                <label htmlFor="select_tipo_agente" className="form-label">Tipo agente</label>
+                                                <select 
+                                                    id="select_tipo_agente" 
+                                                    name="select_tipo_agente" 
+                                                    className={`select2 form-select ${errors?.picker_empresas ? 'input-error' : ''}`}
+                                                    data-allow-clear="true"
+                                                    {...register("select_tipo_agente", {
+                                                        validate: (value) => {
+                                                            return value.length > 0
+                                                        }
+                                                    })}  
+                                                    >  
                                                     <option value="">Selecione</option>
-                                                    <option value="1">Financeiro</option>
-                                                    <option value="1">DCTF</option>
-                                                    <option value="1">Folha</option>
-                                                    <option value="1">Fiscal</option>
-                                                    <option value="1">RH</option>
-                                                    <option value="1">Administrativo</option>
-
                                                 </select>
                                             </div>
 
@@ -193,7 +266,9 @@ export const AgentePage = () => {
                                                     name="tokens_maximos_agente"
                                                     placeholder="Tokens para contexto"
                                                     {...register("tokens_maximos_agente", { required: true })}
-                                                    aria-describedby="defaultFormControlHelp" />
+                                                    aria-describedby="defaultFormControlHelp" 
+                                                    value="500"
+                                                    />
                                                 {errors?.tokens_maximos_agente?.type === 'required' && <p className='input-error-message'> Preencher tokens. </p>}
                                             </div>
 
@@ -263,7 +338,6 @@ export const AgentePage = () => {
                                                                         file.type ===
                                                                         'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || // .docx MIME type
                                                                         file.type === 'application/msword'; // .doc MIME type
-                                                                    console.log("aaa")
                                                                     return (
                                                                         <div key={file.name} className="file-preview">
                                                                             {isValidFile ? (
@@ -286,7 +360,7 @@ export const AgentePage = () => {
                                                                                 setStatusNotificacao(true),
                                                                                 setTipoNotificacao("danger"),
                                                                                 setTextoNotificacao("Permitido apenas TXT ou Word")
-                                                                                )}
+                                                                            )}
                                                                         </div>
                                                                     );
                                                                 })}

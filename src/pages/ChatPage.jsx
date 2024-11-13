@@ -53,13 +53,22 @@ export const ChatPage = () => {
         listaHistoricoChat(objSelecionado);
 
       }
-
-
     };
 
     fetchChats();
 
   }, []);
+
+
+  // Permissao Agentes
+  useEffect(() => {
+    const fetchPermissaoAgente = async () => {
+      const permissao_agentes = await apiInstance.get(`v1/agente/agentesPermissoes/`);
+      return Array.isArray(permissao_agentes.data) ? permissao_agentes.data : [permissao_agentes.data]
+    };
+    
+    fetchPermissaoAgente()  
+  })
 
 
   const handleArquivo = (e) => {
@@ -84,7 +93,6 @@ export const ChatPage = () => {
 
   const listarAgentes = async (id_agente) => {
     const agente = await apiInstance.get(`v1/agente/${id_agente ? id_agente + "/" : ""}`);
-
     return Array.isArray(agente.data) ? agente.data : [agente.data]
   };
 
