@@ -4,24 +4,54 @@ import 'select2/dist/css/select2.min.css';
 import 'select2';
 
 const SideBarMenuLeft = ({ lista_agentes, handleAbrirNovoChat }) => {
-    const selectRef = useRef(null);
+    const selectAgentes = useRef(null);
+    const selectDpto = useRef(null);
     const buscarChats = useRef(null);
 
     useEffect(() => {
-        const $select = $(selectRef.current).select2({
+        // Departamento
+        const $select_departamento = $(selectDpto.current).select2({
             placeholder: 'Selecione',
             allowClear: true,
         });
 
-        $select.empty();
-        $select.append(new Option("Selecione", "", false, false));
+        $select_departamento.empty();
+        $select_departamento.append(new Option("Selecione", "", false, false));
 
-        if (lista_agentes.length > 0) {
-            lista_agentes.forEach((item) => {
-                const newOption = new Option(item.nome, item.idmaster, false, false);
-                $select.append(newOption).trigger('change');
-            });
-        }
+        $select_departamento.on("select2:select", function (e) {
+            let selecao = e.params.data.id
+
+            {lista_agentes.map((item, index) => 
+                Object.entries(item).map(([departamentoName, departamentoInfo]) => {                       
+                    Object.entries(departamentoInfo.agentes_habilitados[selecao]).forEach(([secao, agentes]) => {                        
+                        $select.empty();
+                        $select.append(new Option("Selecione", "", false, false));
+
+                        const newOption = new Option(secao, agentes);
+                        $select.append(newOption).trigger('change');
+                    });
+                  return null;
+                })
+            )}
+        });
+
+
+        // Agentes
+        const $select = $(selectAgentes.current).select2({
+            placeholder: 'Selecione',
+            allowClear: true,
+        });
+
+
+        {lista_agentes.map((item, index) => 
+            Object.entries(item).map(([departamentoName, departamentoInfo]) => {          
+              Object.entries(departamentoInfo.agentes_habilitados).forEach(([secao, agentes]) => {
+                const newOption = new Option(secao);
+                $select_departamento.append(newOption).trigger('change');
+              });
+              return null;
+            })
+        )}
 
         // Limpeza na desmontagem do componente
         return () => {
@@ -38,7 +68,7 @@ const SideBarMenuLeft = ({ lista_agentes, handleAbrirNovoChat }) => {
 
 
     const handleButtonClick = () => {
-        const selectedAgentId = $(selectRef.current).val();
+        const selectedAgentId = $(selectAgentes.current).val();
         handleAbrirNovoChat(selectedAgentId); // Chama a função do pai com o valor
     };
 
@@ -71,35 +101,31 @@ const SideBarMenuLeft = ({ lista_agentes, handleAbrirNovoChat }) => {
                     </div>
                     */}
 
-
                     <div className="my-6">
                         <div className="mb-6">
-                            <label className="form-label" htmlFor="basic-default-country">Departamento</label>
-                            <select className="form-select" id="basic-default-country" required="">
-                                <option value="">Selecione</option>
-                                <option value="usa">Financeiro</option>
-                                <option value="uk">Fiscal</option>
-                                <option value="france">DCTF</option>
-                                <option value="france">RH</option>
-                                <option value="australia">Contábil</option>
-                                <option value="france">Administrativo</option>
+                            <label className="form-label" htmlFor="formValidadeDepartamento">Departamento</label>
+                            <select
+                                id="formValidadeDepartamento"
+                                name="formValidadeDepartamento"
+                                className="form-select select2"
+                                data-allow-clear="true"
+                                ref={selectDpto}>
                             </select>
                         </div>
 
 
                         <div className="col-md-12">
-                            <label className="form-label" htmlFor="formValidationSelect2">Agente</label>
+                            <label className="form-label" htmlFor="formValidationSelect2">Agente</label>                            
                             <select
                                 id="formValidationSelect2"
                                 name="formValidationSelect2"
                                 className="form-select select2"
                                 data-allow-clear="true"
-                                ref={selectRef}>
-
-
+                                ref={selectAgentes}>
                             </select>
                         </div>
                     </div>
+
                     <div className="d-flex mt-6">
                         <button
                             onClick={(e) => { handleButtonClick(); handleToggleBuscarChats() }}

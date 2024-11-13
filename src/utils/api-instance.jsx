@@ -10,19 +10,63 @@ const apiInstance = axios.create({
 })
 
 let refreshAttempts = 0;
+let inactivityTimeout;
+
+// Função para deslogar o usuário e remover os eventos
+const logoutUser = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    window.location.href = "/login";
+    clearTimeout(inactivityTimeout);
+    removeInactivityListeners();
+};
+
+// Função para resetar o temporizador de inatividade apenas se o usuário estiver logado
+const resetInactivityTimeout = () => {
+    if (!localStorage.getItem('access_token')) return;
+    clearTimeout(inactivityTimeout);
+    inactivityTimeout = setTimeout(logoutUser, 10 * 60 * 3000); // 30 minutos
+};
+
+// Função para remover os listeners de inatividade
+const removeInactivityListeners = () => {
+    window.removeEventListener('mousemove', resetInactivityTimeout);
+    window.removeEventListener('mousedown', resetInactivityTimeout);
+    window.removeEventListener('keypress', resetInactivityTimeout);
+    window.removeEventListener('scroll', resetInactivityTimeout);
+    window.removeEventListener('touchstart', resetInactivityTimeout);
+};
+
+// Configurar eventos para monitorar a atividade do usuário
+const initializeInactivityListeners = () => {
+    window.addEventListener('mousemove', resetInactivityTimeout);
+    window.addEventListener('mousedown', resetInactivityTimeout);
+    window.addEventListener('keypress', resetInactivityTimeout);
+    window.addEventListener('scroll', resetInactivityTimeout);
+    window.addEventListener('touchstart', resetInactivityTimeout);
+};
+
+// Inicializar o temporizador e os eventos de inatividade somente se o usuário estiver logado
+if (localStorage.getItem('access_token')) {
+    initializeInactivityListeners();
+    resetInactivityTimeout();
+}
 
 apiInstance.interceptors.response.use(
-    response => response,
+    response => {
+        resetInactivityTimeout(); // Resetar o timer a cada resposta
+        return response;
+    },
     async error => {
         const originalRequest = error.config;
-        
+
         if (error.response.status === 401 && !originalRequest._retry && refreshAttempts < 3) {
             originalRequest._retry = true;
             refreshAttempts++;
 
             const refreshToken = localStorage.getItem('refresh_token');
             if (!refreshToken) {
-                window.location.href = "/login";
+                logoutUser();
                 return Promise.reject(error);
             }
 
@@ -40,13 +84,13 @@ apiInstance.interceptors.response.use(
                 return apiInstance(originalRequest);
             } catch (refreshError) {
                 console.error("Erro ao tentar renovar o token", refreshError);
-                window.location.href = "/login";
+                logoutUser();
             }
         }
 
-        window.location.href = "/login";
+        logoutUser();
         return Promise.reject(error);
     }
 );
 
-export default apiInstance
+export default apiInstance;

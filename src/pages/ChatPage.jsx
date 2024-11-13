@@ -22,6 +22,7 @@ export const ChatPage = () => {
   const [mostrarAvaliacaoResposta, setMostrarAvaliacaoResposta] = useState(false)
   const [arquivo, setArquivo] = useState([])
   const [feitoUpload, setfeitoUpload] = useState(false);
+  const [departamento, setDepartamento] = useState({})
 
   // Agentes
   useEffect(() => {
@@ -59,18 +60,7 @@ export const ChatPage = () => {
 
   }, []);
 
-
-  // Permissao Agentes
-  useEffect(() => {
-    const fetchPermissaoAgente = async () => {
-      const permissao_agentes = await apiInstance.get(`v1/agente/agentesPermissoes/`);
-      return Array.isArray(permissao_agentes.data) ? permissao_agentes.data : [permissao_agentes.data]
-    };
-    
-    fetchPermissaoAgente()  
-  })
-
-
+  
   const handleArquivo = (e) => {
     let tipo_arquivo_upload = e.target.files[0].type
 
@@ -92,7 +82,7 @@ export const ChatPage = () => {
 
 
   const listarAgentes = async (id_agente) => {
-    const agente = await apiInstance.get(`v1/agente/${id_agente ? id_agente + "/" : ""}`);
+    const agente = await apiInstance.get(`v1/agente/agentesPermissoes/permissoes_formatadas/`);
     return Array.isArray(agente.data) ? agente.data : [agente.data]
   };
 

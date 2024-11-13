@@ -7,8 +7,8 @@ export const ListaAgentesChat = ({ lista_chat, handlExcluirChat, handleToogleBox
 
                 <ul className="list-unstyled chat-contact-list py-2 mb-0" id="chat-list">
                     <li className="chat-contact-list-item chat-contact-list-item-title mt-0">
-                        <h5 className="text-primary mb-0">Financeiro </h5>
-                    </li>
+                        <h5 className="text-primary mb-0"> </h5>
+                    </li>                   
 
                     {
                         lista_chat.length > 0 ? (
