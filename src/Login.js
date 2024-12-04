@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 
+
 function Login() {
   const [login, setLogin] = useState("");
   const [senha, setSenha] = useState("");
+  const [empresa, setEmpresa] = useState("");
   const [flagSenhaInvalida, setFlagSenhaInvalida] = useState(false)
 
   const handleSubmitLogin = async (e) => {
@@ -17,7 +19,8 @@ function Login() {
       },
       body: JSON.stringify({
           username: login,
-          password: senha
+          password: senha,
+          empresa: empresa
       })
     })
     .then(response => {
@@ -94,12 +97,38 @@ function Login() {
                       required
                       aria-describedby="password" />
                   </div>
-                </div>   
+                </div>  
+
+
+                <div className="mb-6">
+                  <label className="form-label" htmlFor="empresa" style={{ fontSize: 16 }}>
+                    <strong>
+                      <h5 style={{ marginBottom: 2 }}>Empresa</h5>
+                    </strong>
+                  </label>
+                  <select
+                    id="empresa"
+                    name="empresa"
+                    className=""
+                    data-style="btn-default"
+                    data-live-search="true"
+                    value={empresa}
+                    onChange={(e) => setEmpresa(e.target.value)}
+                    required
+                  >
+                    <option value="">Selecione</option>
+                    <option value="1">Irko Matriz</option>
+                    <option value="2">Irko RJ</option>
+                    <option value="3">Irko Campinas</option>
+                    <option value="4">Irkompacta</option>
+                    <option value="5">Irko BPS</option>
+                  </select>
+                </div>           
                 {
                   flagSenhaInvalida ? (
-                      <div class="alert alert-danger alert-dismissible" role="alert">
+                      <div className="alert alert-danger alert-dismissible" role="alert">
                       Login e/ou senha inválido!
-                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div> 
                   ):("")
                 }
