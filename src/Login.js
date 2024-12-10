@@ -75,7 +75,13 @@ function Login() {
 
               <form id="formAuthentication" className="mb-6" onSubmit={handleSubmitLogin}>
                 <div className="mb-6">
-                  <label htmlFor="username" className="form-label" style={{fontSize: 16}}>Login</label>
+
+                  <label className="form-label" htmlFor="username" style={{ fontSize: 16 }}>
+                    <strong>
+                      <h5 style={{ marginBottom: 2 }}>Login</h5>
+                    </strong>
+                  </label>
+
                   <input
                     type="text"
                     className="form-control"
@@ -86,7 +92,13 @@ function Login() {
                     autoFocus />
                 </div>
                 <div className="mb-6 form-password-toggle">
-                  <label className="form-label" htmlFor="password" style={{fontSize: 16}}>Senha</label>
+
+                  <label className="form-label" htmlFor="password" style={{ fontSize: 16 }}>
+                    <strong>
+                      <h5 style={{ marginBottom: 2 }}>Senha</h5>
+                    </strong>
+                  </label>
+
                   <div className="input-group input-group-merge">
                     <input
                       type="password"
@@ -106,10 +118,11 @@ function Login() {
                       <h5 style={{ marginBottom: 2 }}>Empresa</h5>
                     </strong>
                   </label>
+
                   <select
                     id="empresa"
                     name="empresa"
-                    className=""
+                    className="form-select select2"
                     data-style="btn-default"
                     data-live-search="true"
                     value={empresa}

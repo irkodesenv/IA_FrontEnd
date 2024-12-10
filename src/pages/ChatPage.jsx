@@ -107,6 +107,11 @@ export const ChatPage = () => {
       await apiInstance.delete(`v1/chat/deletar/?idmaster=${index}`);
 
       setListaChat(await listarChats(""));
+      // Limpa Header
+      setHeaderAgente("");
+
+      // Limpa Chat
+      listaHistoricoChat("");
 
     } catch (error) {
 
