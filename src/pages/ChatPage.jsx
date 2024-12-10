@@ -216,6 +216,10 @@ export const ChatPage = () => {
 
       // Recarrega chat historico
       listaHistoricoChat(objSelecionado);
+
+      // Nao mostrar avaliacao
+      setMostrarAvaliacaoResposta(false)
+
     }
   };
 
