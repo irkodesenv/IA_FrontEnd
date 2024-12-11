@@ -10,9 +10,7 @@ import '../styles/chat.css';
 
 
 export const ChatPage = () => {
-  const [submitChat, setSubmitChat] = useState();
   const [message, setMessage] = useState('');
-  const [chatList, setChatList] = useState([])
   const [listaAgentes, setListaAgentes] = useState([]);
   const [listaChat, setListaChat] = useState([]);
   const [activeBoxChats, setActiveBoxChats] = useState(null)
@@ -22,7 +20,6 @@ export const ChatPage = () => {
   const [mostrarAvaliacaoResposta, setMostrarAvaliacaoResposta] = useState(false)
   const [arquivo, setArquivo] = useState([])
   const [feitoUpload, setfeitoUpload] = useState(false);
-  const [departamento, setDepartamento] = useState({})
 
   // Agentes
   useEffect(() => {
