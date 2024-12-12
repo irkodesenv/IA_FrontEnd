@@ -133,7 +133,6 @@ export const ChatPage = () => {
 
     const form_obj_agente = new FormData();
     form_obj_agente.append('idmaster', activeBoxChats);
-    form_obj_agente.append('id_usuario', "1");
     form_obj_agente.append('id_agente', headerAgente.id_agente);
     form_obj_agente.append('autor', "2");
     form_obj_agente.append('mensagem', message);
@@ -177,7 +176,6 @@ export const ChatPage = () => {
 
     const obj_chat = {
       "idmaster": gerarIdMaster(),
-      "id_usuario": "1",
       "id_agente": index,
       "autor": "1",
       "mensagem": "Como posso ajudar hoje?"
