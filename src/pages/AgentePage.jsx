@@ -409,7 +409,7 @@ export const AgentePage = () => {
                                                     >
                                                         <input
                                                             name="base_conhecimento"
-                                                            {...register('base_conhecimento', { required: true })}
+                                                            {...register('base_conhecimento', { required: false })}
                                                             {...getInputProps({
                                                                 accept: ".txt,.doc,.docx",
                                                             })}
