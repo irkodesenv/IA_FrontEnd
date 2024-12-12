@@ -159,6 +159,46 @@ export const AgentePage = () => {
         return Array.isArray(tipo_agente.data) ? tipo_agente.data : [tipo_agente.data];
     };
 
+    const handleInativarAgente = async (data) => {
+        const id_agente_inativar = data.target.id;
+        
+        try {
+            const response = await apiInstance.post(`v1/agente/alterar_status/`, { id: id_agente_inativar });
+
+            if (response.status === 200) {     
+                console.log("ID a inativar:", id_agente_inativar);
+                console.log("Lista antes:", listaAgentes);
+                setListaAgentes(prevState => prevState.filter(agente => agente.idmaster !== id_agente_inativar));
+
+                console.log("Lista depois:", listaAgentes);
+                setStatusNotificacao(true);
+                setTipoNotificacao("success");
+                setTextoNotificacao(response.data.message);
+            } else {                
+                setStatusNotificacao(true);
+                setTipoNotificacao("danger");
+                setTextoNotificacao("Retorno inesperado, verifique os dados retornados.");
+            }
+        } catch (error) {    
+            setStatusNotificacao(true);
+            setTipoNotificacao("danger");               
+            if (error.response) {                     
+                if (error.response.status === 400) {                    
+                    setTextoNotificacao(error.response.data.error);
+                } else if (error.response.status === 404) {
+                    setTextoNotificacao(error.response.data.error);
+                } else if (error.response.status === 500) {
+                    setTextoNotificacao(error.response.data.error);
+                } else {
+                    setTextoNotificacao("Ocorreu um erro desconhecido ao tentar alterar o status.");
+                }
+            } else {              
+                setTextoNotificacao("Erro de rede ou problema na requisição.");
+            }
+        }
+    };
+    
+
     const handleSubmitAgente = async (data) => {
         try {
             const form_obj_agente = new FormData();
@@ -218,7 +258,6 @@ export const AgentePage = () => {
         ? agente.instrucoes[0]['instrucao'] 
         : "";
   
-        // Preencher o formulário de edição com os dados do agente selecionado
         resetEdit({
             edit_nome_agente: agente.nome || "1",
             edit_descricao_agente: agente.descritivo || "",
@@ -560,7 +599,7 @@ export const AgentePage = () => {
                                                             <div className="dropdown-menu">
                                                                 <a className="dropdown-item" id={agente.idmaster} onClick={handleAbrirModalEditarAgente}>
                                                                     <i className="bx bx-edit-alt me-1"></i> Editar</a>
-                                                                <a className="dropdown-item">
+                                                                <a className="dropdown-item" id={agente.idmaster} onClick={handleInativarAgente}>
                                                                     <i className="bx bx-trash me-1"></i> Deletar</a>
                                                             </div>
                                                         </div>

@@ -3,6 +3,7 @@ import token_csrf from './token_csrf'
 
 const apiInstance = axios.create({
     baseURL: process.env.REACT_APP_BASE_PATH_API,
+    withCredentials: true,
     headers: {
         'X-CSRFToken': token_csrf,
         Authorization: `Bearer ${localStorage.getItem('access_token')}`
