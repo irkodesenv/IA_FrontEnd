@@ -1,84 +1,99 @@
-import { useEffect, useState } from 'react';
-import './App.css';
-
+import { useState } from "react";
+import "./App.css";
 
 function Login() {
   const [login, setLogin] = useState("");
   const [senha, setSenha] = useState("");
   const [empresa, setEmpresa] = useState("");
-  const [flagSenhaInvalida, setFlagSenhaInvalida] = useState(false)
+  const [flagSenhaInvalida, setFlagSenhaInvalida] = useState(false);
 
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
-    var path_get_token = process.env.REACT_APP_BASE_PATH_API
+    let path_get_token = process.env.REACT_APP_BASE_PATH_API + "/v1/token/";
 
-    fetch(path_get_token += "/v1/token/", {
-      method: 'POST',
+    fetch(path_get_token, {
+      method: "POST",
       headers: {
-          'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-          username: login,
-          password: senha,
-          empresa: empresa
+        username: login,
+        password: senha,
+        empresa: empresa,
+      }),
+    })
+      .then((response) => {
+        const statusCode = response.status;
+        return response.json().then((data) => ({
+          statusCode: statusCode,
+          data: data,
+        }));
       })
-    })
-    .then(response => {
-      const statusCode = response.status;
-      return response.json().then(data => ({
-        statusCode: statusCode,
-        data: data
-      }));
-    })
-    .then(result => {     
-      const { statusCode, data } = result;
-  
-      if (statusCode === 200) {
-        setFlagSenhaInvalida(false)
-        // Armazena o token JWT no localStorage ou sessionStorage
-        localStorage.setItem('access_token', data.access);
-        localStorage.setItem('refresh_token', data.refresh);
+      .then((result) => {
+        const { statusCode, data } = result;
 
-        var path_location = `${process.env.REACT_APP_BASE_PATH}/Chat`
-        window.location.href = path_location; 
-      } else {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        setFlagSenhaInvalida(true)
-      }
-    })
-    .catch(error => console.error('Erro no login:', error));
-  }
+        if (statusCode === 200) {
+          setFlagSenhaInvalida(false);
+          localStorage.setItem("access_token", data.access);
+          localStorage.setItem("refresh_token", data.refresh);
+          window.location.href = `${process.env.REACT_APP_BASE_PATH}/Chat`;
+        } else {
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
+          setFlagSenhaInvalida(true);
+        }
+      })
+      .catch((error) => console.error("Erro no login:", error));
+  };
 
   return (
-    <div className="App">
-      <div className="authentication-wrapper authentication-cover">
-
-        <div className="authentication-inner row m-0">
-
-          <div className="d-none d-lg-flex col-lg-7 col-xl-8 align-items-center p-5">
-            <div className="w-100 d-flex justify-content-center">
-              <img
-                src="./static/assets/img/illustrations/IA.png"
-                className="img-fluid"
-                alt="Login image"
-                width="950"
-                data-app-dark-img="illustrations/boy-with-rocket-dark.png"
-                data-app-light-img="illustrations/boy-with-rocket-light.png" />
-            </div>
+    <div className="authentication-wrapper authentication-cover">
+     
+      <div className="authentication-inner row m-0">
+        {/* Imagem à esquerda */}
+        <div className="d-none d-lg-flex col-lg-7 col-xl-8 align-items-center p-5">
+          <div className="w-100 d-flex justify-content-center">
+            <img
+              src="./IA/static/assets/img/illustrations/IA.png"
+              className="img-fluid"
+              alt="Login image"
+              width="700"
+            />
           </div>
+        </div>
 
-          <div className="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg p-sm-12 p-6">
+        {/* Formulário de Login */}
+
+        <div className="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg p-sm-12 p-6" 
+        style={{
+          backgroundColor: 'white',
+          minHeight: '100vh',
+          display: 'flex',
+          justifyContent: 'center', }}>
+            
             <div className="w-px-400 mx-auto mt-12 pt-5">
-              <h4 className="mb-1">IRKO IA</h4>
-              <p className="mb-6">Para acessar, basta inserir o login e senha da sua máquina. </p>
+               {/* Logo */}
+                <a className="app-brand auth-cover-brand gap-2">
+                  <span className="app-brand-logo demo">
+                    <img
+                      src="./ia/static/assets/img/logo_irko/irko.png"
+                      alt="Logo"
+                      className="w-px-50 h-auto mt-2"
+                    />
+                  </span>
+                  <span className="app-brand-text demo text-heading fw-bold mt-2">
+                    IRKO
+                  </span>
+                </a>
+              <h4 className="mb-1" style={{ marginTop: 20 }}>Bem vindo ao Portal IA IRKO! 👋</h4>
+              <p className="mb-6"> <h6> Para acessar, basta inserir o login e senha da sua máquina. </h6></p>
 
               <form id="formAuthentication" className="mb-6" onSubmit={handleSubmitLogin}>
                 <div className="mb-6">
 
                   <label className="form-label" htmlFor="username" style={{ fontSize: 16 }}>
                     <strong>
-                      <h5 style={{ marginBottom: 2 }}>Login</h5>
+                      <h5 style={{ marginBottom: 2 }}>Usuário</h5>
                     </strong>
                   </label>
 
@@ -110,7 +125,6 @@ function Login() {
                       aria-describedby="password" />
                   </div>
                 </div>  
-
 
                 <div className="mb-6">
                   <label className="form-label" htmlFor="empresa" style={{ fontSize: 16 }}>
@@ -145,14 +159,21 @@ function Login() {
                     </div> 
                   ):("")
                 }
-                <button type="submit" className="btn btn-primary d-grid w-100">Entrar</button>
+               
+                <button
+                  type="submit"
+                  className="btn btn-primary d-grid w-100"
+                  style={{                   
+                    height: '60px', // O React reconhece automaticamente o importante
+                  }}>
+                  <h3 style={{color: '#FFF'}}> Entrar</h3>
+                </button>
               </form>      
 
             </div>
           </div>
-        </div>
+        </div> 
       </div>
-    </div>
   );
 }
 
