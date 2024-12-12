@@ -54,7 +54,7 @@ function Login() {
         <div className="d-none d-lg-flex col-lg-7 col-xl-8 align-items-center p-5">
           <div className="w-100 d-flex justify-content-center">
             <img
-              src="./IA/static/assets/img/illustrations/IA.png"
+              src="./static/assets/img/illustrations/IA.png"
               className="img-fluid"
               alt="Login image"
               width="700"
@@ -76,7 +76,7 @@ function Login() {
                 <a className="app-brand auth-cover-brand gap-2">
                   <span className="app-brand-logo demo">
                     <img
-                      src="./ia/static/assets/img/logo_irko/irko.png"
+                      src="./static/assets/img/logo_irko/irko.png"
                       alt="Logo"
                       className="w-px-50 h-auto mt-2"
                     />
