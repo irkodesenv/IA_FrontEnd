@@ -9,53 +9,60 @@ const SideBarMenuLeft = ({ lista_agentes, handleAbrirNovoChat }) => {
     const buscarChats = useRef(null);
 
     useEffect(() => {
-        // Departamento
+        // Inicializa o Select2 para o Departamento
         const $select_departamento = $(selectDpto.current).select2({
             placeholder: 'Selecione',
             allowClear: true,
         });
-
-        $select_departamento.empty();
-        $select_departamento.append(new Option("Selecione", "", false, false));
-
-        $select_departamento.on("select2:select", function (e) {
-            let selecao = e.params.data.id
-
-            {lista_agentes.map((item, index) => 
-                Object.entries(item).map(([departamentoName, departamentoInfo]) => {                       
-                    Object.entries(departamentoInfo.agentes_habilitados[selecao]).forEach(([secao, agentes]) => {                        
-                        $select.empty();
-                        $select.append(new Option("Selecione", "", false, false));
-
-                        const newOption = new Option(secao, agentes);
-                        $select.append(newOption).trigger('change');
-                    });
-                  return null;
-                })
-            )}
-        });
-
-
-        // Agentes
-        const $select = $(selectAgentes.current).select2({
+    
+        // Inicializa o Select2 para os Agentes
+        const $select_agentes = $(selectAgentes.current).select2({
             placeholder: 'Selecione',
             allowClear: true,
         });
-
-
-        {lista_agentes.map((item, index) => 
-            Object.entries(item).map(([departamentoName, departamentoInfo]) => {          
-              Object.entries(departamentoInfo.agentes_habilitados).forEach(([secao, agentes]) => {
-                const newOption = new Option(secao);
-                $select_departamento.append(newOption).trigger('change');
-              });
-              return null;
-            })
-        )}
-
+    
+        // Popula os departamentos no select de departamentos
+        $select_departamento.empty();
+        $select_departamento.append(new Option("Selecione", "", false, false));
+    
+        lista_agentes.forEach((item) => {
+            Object.entries(item).forEach(([_, departamentoInfo]) => {
+                Object.keys(departamentoInfo.agentes_habilitados).forEach((departamento) => {
+                    const newOption = new Option(departamento, departamento, false, false);
+                    $select_departamento.append(newOption);
+                });
+            });
+        });
+    
+        // Evento para carregar agentes ao selecionar um departamento
+        $select_departamento.on("select2:select", function (e) {
+            const departamentoSelecionado = e.params.data.id;
+    
+            // Limpa o select de agentes antes de adicionar novos
+            $select_agentes.empty();
+            $select_agentes.append(new Option("Selecione", "", false, false));
+    
+            // Adiciona os agentes habilitados ao select de agentes
+            lista_agentes.forEach((item) => {
+                Object.entries(item).forEach(([_, departamentoInfo]) => {
+                    const agentes_habilitados = departamentoInfo.agentes_habilitados[departamentoSelecionado];
+                    if (agentes_habilitados) {
+                        Object.entries(agentes_habilitados).forEach(([nomeAgente, idAgente]) => {
+                            const newOption = new Option(nomeAgente, idAgente, false, false);
+                            $select_agentes.append(newOption);
+                        });
+                    }
+                });
+            });
+    
+            // Atualiza o Select2 com os novos agentes
+            $select_agentes.trigger('change');
+        });
+    
         // Limpeza na desmontagem do componente
         return () => {
-            $select.select2('destroy');
+            $select_departamento.select2('destroy');
+            $select_agentes.select2('destroy');
         };
     }, [lista_agentes]);
 
@@ -71,6 +78,11 @@ const SideBarMenuLeft = ({ lista_agentes, handleAbrirNovoChat }) => {
         const selectedAgentId = $(selectAgentes.current).val();
         handleAbrirNovoChat(selectedAgentId); // Chama a função do pai com o valor
     };
+
+    const retornaListaAgentesSelecionados = () => {
+        const selectedAgentId = $(selectDpto.current).val();
+        console.log(selectedAgentId)       
+    }
 
 
     return (
@@ -109,6 +121,7 @@ const SideBarMenuLeft = ({ lista_agentes, handleAbrirNovoChat }) => {
                                 name="formValidadeDepartamento"
                                 className="form-select select2"
                                 data-allow-clear="true"
+                                onClick={retornaListaAgentesSelecionados}
                                 ref={selectDpto}>
                             </select>
                         </div>
