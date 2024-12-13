@@ -115,7 +115,7 @@ const SideBarMenuLeft = ({ lista_agentes, handleAbrirNovoChat }) => {
 
                     <div className="my-6">
                         <div className="mb-6">
-                            <label className="form-label" htmlFor="formValidadeDepartamento">Departamento</label>
+                            <label className="form-label" htmlFor="formValidadeDepartamento">Assunto</label>
                             <select
                                 id="formValidadeDepartamento"
                                 name="formValidadeDepartamento"
