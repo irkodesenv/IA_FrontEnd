@@ -1,4 +1,4 @@
-
+import Botao from '../utils/Botao'
 export const ListaAgentesChat = ({ lista_chat, handlExcluirChat, handleToogleBoxCharts, activeBoxChats }) => {
 
     return (
@@ -8,7 +8,7 @@ export const ListaAgentesChat = ({ lista_chat, handlExcluirChat, handleToogleBox
                 <ul className="list-unstyled chat-contact-list py-2 mb-0" id="chat-list">
                     <li className="chat-contact-list-item chat-contact-list-item-title mt-0">
                         <h5 className="text-primary mb-0"> </h5>
-                    </li>                   
+                    </li>               
 
                     {
                         lista_chat.length > 0 ? (
@@ -44,7 +44,8 @@ export const ListaAgentesChat = ({ lista_chat, handlExcluirChat, handleToogleBox
                                 </>
                             ))
                         ) : (
-                            <li className="chat-contact-list-item">Nenhum agente encontrado</li>
+                            {/* Botao*/}, 
+                            <li className="chat-contact-list-item" style={{marginLeft: 40, marginRight: 40}}>Nenhum chat encontrado</li>                                     
                         )
                     }
 

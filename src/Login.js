@@ -6,6 +6,7 @@ function Login() {
   const [senha, setSenha] = useState("");
   const [empresa, setEmpresa] = useState("");
   const [flagSenhaInvalida, setFlagSenhaInvalida] = useState(false);
+  const [notificacao, setNotificacao] = useState("")
 
   const handleSubmitLogin = async (e) => {
     e.preventDefault();

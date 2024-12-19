@@ -2,24 +2,31 @@ import React, { useRef, useEffect } from 'react';
 import $ from 'jquery';
 import 'select2/dist/css/select2.min.css';
 import 'select2';
+import Botao from '../utils/Botao'
 
-const SideBarMenuLeft = ({ lista_agentes, handleAbrirNovoChat }) => {
+const SideBarMenuLeft = ({ lista_agentes, handleAbrirNovoChat, handleAbrirChatLivre }) => {
     const selectAgentes = useRef(null);
     const selectDpto = useRef(null);
     const buscarChats = useRef(null);
 
     useEffect(() => {
-        // Inicializa o Select2 para o Departamento
-        const $select_departamento = $(selectDpto.current).select2({
-            placeholder: 'Selecione',
-            allowClear: true,
-        });
+        const $select_departamento = $(selectDpto.current);
+        const $select_agentes = $(selectAgentes.current);
     
-        // Inicializa o Select2 para os Agentes
-        const $select_agentes = $(selectAgentes.current).select2({
-            placeholder: 'Selecione',
-            allowClear: true,
-        });
+        // Verifica se já está inicializado
+        if (!$select_departamento.hasClass("select2-hidden-accessible")) {
+            $select_departamento.select2({
+                placeholder: 'Selecione',
+                allowClear: true,
+            });
+        }
+    
+        if (!$select_agentes.hasClass("select2-hidden-accessible")) {
+            $select_agentes.select2({
+                placeholder: 'Selecione',
+                allowClear: true,
+            });
+        }
     
         // Popula os departamentos no select de departamentos
         $select_departamento.empty();
@@ -73,11 +80,15 @@ const SideBarMenuLeft = ({ lista_agentes, handleAbrirNovoChat }) => {
         }
     };
 
-
     const handleButtonClick = () => {
         const selectedAgentId = $(selectAgentes.current).val();
         handleAbrirNovoChat(selectedAgentId); // Chama a função do pai com o valor
     };
+
+
+    const handleButtonNovoChat = () => {
+        handleAbrirChatLivre()
+    }
 
     const retornaListaAgentesSelecionados = () => {
         const selectedAgentId = $(selectDpto.current).val();
@@ -86,7 +97,7 @@ const SideBarMenuLeft = ({ lista_agentes, handleAbrirNovoChat }) => {
 
 
     return (
-        <>
+        <>        
             {/* Sidebar */}
             <div className="col app-chat-sidebar-left app-sidebar overflow-hidden sidebar" ref={buscarChats} id="app-chat-sidebar-left">
                 <div className="chat-sidebar-left-user sidebar-header d-flex flex-column justify-content-center align-items-center flex-wrap px-6 pt-12">
@@ -98,21 +109,6 @@ const SideBarMenuLeft = ({ lista_agentes, handleAbrirNovoChat }) => {
                         onClick={handleToggleBuscarChats}></i>
                 </div>
                 <div className="sidebar-body px-6 pb-6">
-                    {/* 
-
-                    <div className="flex-grow-1 input-group input-group-merge rounded-pill">
-                        <span className="input-group-text" id="basic-addon-search31"
-                        ><i className="bx bx-search bx-sm"></i
-                        ></span>
-                        <input
-                            type="text"
-                            className="form-control chat-search-input"
-                            placeholder="Pesquisar..."
-                            aria-label="Pesquisar..."
-                            aria-describedby="basic-addon-search31" />
-                    </div>
-                    */}
-
                     <div className="my-6">
                         <div className="mb-6">
                             <label className="form-label" htmlFor="formValidadeDepartamento">Assunto</label>
@@ -152,15 +148,31 @@ const SideBarMenuLeft = ({ lista_agentes, handleAbrirNovoChat }) => {
                 </div>
             </div>
 
-            {/*  Botao */}
-            <div
-                className="flex-shrink-0 avatar me-4 ml-3"
-                data-bs-toggle="sidebar"
-                data-overlay="app-overlay-ex"
-                onClick={handleToggleBuscarChats}
-                style={{ marginTop: 10, marginLeft: 10, color: '#696cff' }}>
-                <i className="menu-icon tf-icons bx bxs-plus-circle" style={{ fontSize: '32px', marginRight: '0px' }}></i>
-            </div>
+            <div style={{textAlign: 'center'}}>
+                <h5 class="card-header">Nova conversa</h5>
+
+                <button 
+                    type="button" 
+                    data-bs-toggle="sidebar"
+                    data-overlay="app-overlay-ex"
+                    onClick={handleButtonNovoChat}
+                    class="btn btn-label-primary"> 
+                    Chat Livre 
+                </button>
+
+                <button 
+                    type="button" 
+                    data-bs-toggle="sidebar"
+                    data-overlay="app-overlay-ex"
+                    onClick={handleToggleBuscarChats}
+                    class="btn btn-label-primary"
+                    style={{marginLeft: 10}}
+                    > 
+                    Agente treinado 
+                </button>
+            </div>    
+
+            <hr></hr>
         </>
     )
 }

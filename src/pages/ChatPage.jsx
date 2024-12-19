@@ -13,6 +13,7 @@ export const ChatPage = () => {
   const [message, setMessage] = useState('');
   const [listaAgentes, setListaAgentes] = useState([]);
   const [listaChat, setListaChat] = useState([]);
+  const [listaAtualizada, setListaAtualizada] = useState(false);
   const [activeBoxChats, setActiveBoxChats] = useState(null)
   const [headerAgente, setHeaderAgente] = useState(null)
   const [historicoChat, setHistoricoChat] = useState([])
@@ -37,27 +38,35 @@ export const ChatPage = () => {
     const fetchChats = async () => {
       const chat = await listarChats("");
       setListaChat(chat);
-
-      // Ultimo agente da lista default selecionado
-
-      if (chat.length > 0) {
-        setActiveBoxChats(chat[0].idmaster)
-
-        // Gera Header
-        const objSelecionado = chat.find(item => item.idmaster === chat[0].idmaster)
-        setHeaderAgente(objSelecionado);
-
-        // Recarrega chat historico
-        listaHistoricoChat(objSelecionado);
-
-      }
     };
 
     fetchChats();
 
   }, []);
 
-  
+
+  useEffect(() => {
+    if (listaChat.length > 0) {
+      selecionaUltimoAgenteNaListaDeConversa(listaChat);
+    }
+  }, [listaChat]);
+
+
+  const selecionaUltimoAgenteNaListaDeConversa = (lista_chat) => {
+    if (lista_chat.length > 0) {
+      setActiveBoxChats(lista_chat[0].idmaster)
+
+      // Gera Header
+      const objSelecionado = lista_chat.find(item => item.idmaster === lista_chat[0].idmaster)
+      setHeaderAgente(objSelecionado);
+
+      // Recarrega chat historico
+      listaHistoricoChat(objSelecionado);
+
+    }
+  }
+
+
   const handleArquivo = (e) => {
     let tipo_arquivo_upload = e.target.files[0].type
 
@@ -107,9 +116,6 @@ export const ChatPage = () => {
       // Limpa Header
       setHeaderAgente("");
 
-      // Limpa Chat
-      listaHistoricoChat("");
-
     } catch (error) {
 
       if (error.status === 403) {
@@ -133,9 +139,15 @@ export const ChatPage = () => {
 
     const form_obj_agente = new FormData();
     form_obj_agente.append('idmaster', activeBoxChats);
-    form_obj_agente.append('id_agente', headerAgente.id_agente);
+    form_obj_agente.append('id_agente', headerAgente?.id_agente || "");
     form_obj_agente.append('autor', "2");
     form_obj_agente.append('mensagem', message);
+
+    
+    if(!headerAgente?.id_agente){
+      handleAbrirChatLivre()
+      return
+    }
     
     if (arquivo) {
       arquivo.forEach((file, index) => {
@@ -152,18 +164,18 @@ export const ChatPage = () => {
     setMessage("");
 
     try {
-      const obj_send_message = {
-        "idmaster": activeBoxChats,
-        "id_usuario": "1",
-        "id_agente": headerAgente.id_agente,
-        "autor": "2",
-        "mensagem": message
-      }
-
-      await apiInstance.post(`v1/chat/enviarPergunta/`, form_obj_agente)
+      const agente = await apiInstance.post(`v1/chat/enviarPergunta/`, form_obj_agente)
+      const flg_avaliar_pergunta = agente.data[0].avalia
+      
+      console.log(agente.data[0].avalia)
 
       setMostrarLoadginPergunta(false)
       listaHistoricoChat(headerAgente);
+      
+      if(!flg_avaliar_pergunta){
+        return
+      }
+      
       setMostrarAvaliacaoResposta(true)
 
     } catch {
@@ -191,6 +203,31 @@ export const ChatPage = () => {
       console.log(erro)
     }
   };
+
+
+  const handleAbrirChatLivre = async () => {
+
+    const obj_chat = {
+        "idmaster": gerarIdMaster(),
+        "autor": "1",
+        "mensagem": "Como posso ajudar hoje?"
+      }
+  
+      try {
+  
+        await apiInstance.post('v1/chat/', obj_chat)
+  
+        const novaLista = await listarChats("");
+
+        setListaChat(novaLista);
+
+        setListaAtualizada(true);
+  
+      } catch (erro) {
+        console.log(erro)
+      }
+
+  }
 
 
   const listaHistoricoChat = async (objSelecionado) => {
@@ -249,7 +286,7 @@ export const ChatPage = () => {
           <div
             className="col app-chat-contacts app-sidebar flex-grow-0 overflow-hidden border-end"
             id="app-chat-contacts">
-            <div className="sidebar-header px-6 border-bottom d-flex align-items-center">
+            <div className="sidebar-header px-12 border-bottom d-flex align-items-center">
               <div className="d-flex align-items-center me-6 me-lg-0">
 
                 <div className="flex-grow-1 input-group input-group-merge rounded-pill">
@@ -266,8 +303,6 @@ export const ChatPage = () => {
                   />
                 </div>
 
-                <SideBarMenuLeft lista_agentes={listaAgentes} handleAbrirNovoChat={handleAbrirNovoChat} />
-
               </div>
               <i
                 className="bx bx-x bx-lg cursor-pointer position-absolute top-50 end-0 translate-middle d-lg-none d-block"
@@ -275,6 +310,8 @@ export const ChatPage = () => {
                 data-bs-toggle="sidebar"
                 data-target="#app-chat-contacts"></i>
             </div>
+
+            <SideBarMenuLeft lista_agentes={listaAgentes} handleAbrirNovoChat={handleAbrirNovoChat} handleAbrirChatLivre={handleAbrirChatLivre} />
 
             <ListaAgentesChat lista_chat={listaChat} handlExcluirChat={handlExcluirChat} handleToogleBoxCharts={handleToogleBoxCharts} activeBoxChats={activeBoxChats} />
 
@@ -298,7 +335,7 @@ export const ChatPage = () => {
                     id="input-message-chat"
                     className="form-control message-input border-0 me-4 shadow-none"
                     value={message}
-                    placeholder={mostrarAvaliacaoResposta ? "Avalie para perguntar novamente" : "O que deseja?"}
+                    placeholder={mostrarAvaliacaoResposta ? "Avalie para perguntar novamente" : "Como posso te ajudar?"}
                     onChange={(e) => setMessage(e.target.value)}
                     disabled={mostrarAvaliacaoResposta} />
 
