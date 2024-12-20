@@ -26,7 +26,7 @@ export const HeaderAgente = ({ headerAgente }) => {
                 headerAgente ?
                   (
                     <>
-                      <h6 className="m-0 fw-normal">{headerAgente.agente.nome}</h6>
+                      <h6 className="m-0 fw-normal">{headerAgente.titulo}</h6>
                       <small>{headerAgente.agente.descritivo}</small>
                     </>
                   ) : (

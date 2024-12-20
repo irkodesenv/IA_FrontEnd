@@ -166,11 +166,12 @@ export const ChatPage = () => {
     try {
       const agente = await apiInstance.post(`v1/chat/enviarPergunta/`, form_obj_agente)
       const flg_avaliar_pergunta = agente.data[0].avalia
-      
+
       // Mudando nome do objeto em tempo real, no refresh ja vira o correto
       if (agente.data[0].titulo){
         const objSelecionado = listaChat.find(item => item.idmaster === activeBoxChats)
         objSelecionado.titulo = agente.data[0].titulo
+        headerAgente.titulo = agente.data[0].titulo
       }
 
       setMostrarLoadginPergunta(false)
