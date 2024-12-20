@@ -2,6 +2,7 @@ import React from 'react'
 
 export const HeaderAgente = ({ headerAgente }) => {
   return (
+    console.log(headerAgente),
     <>
       <div className="chat-history-header border-bottom">
         <div className="d-flex justify-content-between align-items-center">
@@ -26,7 +27,13 @@ export const HeaderAgente = ({ headerAgente }) => {
                 headerAgente ?
                   (
                     <>
-                      <h6 className="m-0 fw-normal">{headerAgente.titulo}</h6>
+                    {
+                      headerAgente.agente.conversa_livre === 1 ? 
+                        (<h6 className="m-0 fw-normal">{headerAgente.titulo}</h6>)
+                        : 
+                        (<h6 className="m-0 fw-normal">{headerAgente.agente.nome}</h6>)
+                    }
+                      
                       <small>{headerAgente.agente.descritivo}</small>
                     </>
                   ) : (
