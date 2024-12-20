@@ -13,7 +13,7 @@ export const ListaAgentesChat = ({ lista_chat, handlExcluirChat, handleToogleBox
                     {
                         lista_chat.length > 0 ? (
                             lista_chat.map((item, key) => (
-                                <>
+                                <>                                    
                                     <li key={item.idmaster} onClick={(e) => handleToogleBoxCharts(item.idmaster)} className={`chat-contact-list-item mb-1 ${activeBoxChats === item.idmaster ? 'active' : ''} `}>
                                         <a className="d-flex align-items-center">
                                             <div className="flex-shrink-0 avatar avatar-online">
@@ -22,9 +22,18 @@ export const ListaAgentesChat = ({ lista_chat, handlExcluirChat, handleToogleBox
 
                                             </div>
                                             <div className="chat-contact-info flex-grow-1 ms-4">
-                                                <div className="d-flex justify-content-between align-items-center">
-                                                    <h6 className="chat-contact-name text-truncate m-0 fw-normal">{item.agente.nome}</h6>
-
+                                                <div className="d-flex justify-content-between align-items-center"> 
+                                                {
+                                                    item.agente.conversa_livre === 0 ? (
+                                                    <h6 className="chat-contact-name text-truncate m-0 fw-normal">
+                                                        {item.agente.nome}
+                                                    </h6>
+                                                    ) : (
+                                                    <h6 className="chat-contact-name text-truncate m-0 fw-normal">
+                                                        {item.titulo}
+                                                    </h6>
+                                                    )
+                                                }                                             
                                                     <div className="dropdown">
                                                         <button
                                                             className="btn btn-icon text-secondary dropdown-toggle hide-arrow"
