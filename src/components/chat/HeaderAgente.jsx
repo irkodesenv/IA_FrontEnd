@@ -2,7 +2,6 @@ import React from 'react'
 
 export const HeaderAgente = ({ headerAgente }) => {
   return (
-    console.log(headerAgente),
     <>
       <div className="chat-history-header border-bottom">
         <div className="d-flex justify-content-between align-items-center">
