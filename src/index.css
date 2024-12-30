@@ -11,3 +11,23 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.box-amostragem-gpt {
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.box-amostragem-gpt:hover {
+  background-color: #5c719e;
+  transform: scale(1.02);
+  color: #FFF;
+  border-radius: 10px
+}
+
+.box-amostragem-gpt:hover h6,
+.box-amostragem-gpt:hover small {
+  color: #FFF;
+}
+
+.clickable {
+  cursor: pointer;
+}

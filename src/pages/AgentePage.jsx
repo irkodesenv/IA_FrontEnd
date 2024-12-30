@@ -23,6 +23,9 @@ export const AgentePage = () => {
     const [listaAgentes, setListaAgentes] = useState([]);
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedAgente, setSelectedAgente] = useState(null);
+    const [empresas, setEmpresas] = useState([]);
+    const [departamentos, setDepartamentos] = useState([]);
+    const [empresas_habilitadas, setempresas_habilitadas] = useState([]);
 
     // Agentes
     useEffect(() => {
@@ -34,6 +37,36 @@ export const AgentePage = () => {
         fetchAgentes();
 
     }, []);
+
+    useEffect(() => {
+        updateModalSelectpicker();
+    }, [showEditModal]);
+
+    const updateModalSelectpicker = () => {
+        if (window.$) {
+            const $selectEmpresas = window.$('#edit_picker_empresas');
+            const $selectDepartamentos = window.$('#edit_picker_departamentos');
+            
+            $selectEmpresas.selectpicker('destroy');
+            $selectDepartamentos.selectpicker('destroy');
+
+            $selectEmpresas.empty();
+            options_empresas.forEach((empresa) => {
+                const isSelected = Object.keys(empresas_habilitadas).includes(empresa.razao_social);
+                $selectEmpresas.append(new Option(empresa.razao_social, empresa.id, isSelected, isSelected));
+            });
+            $selectEmpresas.selectpicker('render');
+
+            $selectDepartamentos.empty();
+
+            Object.entries(empresas_habilitadas).forEach(([empresa, departamentos]) => {
+                departamentos.forEach((departamento) => {
+                    $selectDepartamentos.append(new Option(departamento.nome, departamento.id, true, true));
+                });
+            });
+            $selectDepartamentos.selectpicker('render');
+        }
+    };
 
     const listarAgentes = async (id_agente) => {
         const agente = await apiInstance.get(`v1/agente/`);
@@ -161,29 +194,25 @@ export const AgentePage = () => {
 
     const handleInativarAgente = async (data) => {
         const id_agente_inativar = data.target.id;
-        
+
         try {
             const response = await apiInstance.post(`v1/agente/alterar_status/`, { id: id_agente_inativar });
 
-            if (response.status === 200) {     
-                console.log("ID a inativar:", id_agente_inativar);
-                console.log("Lista antes:", listaAgentes);
+            if (response.status === 200) {
                 setListaAgentes(prevState => prevState.filter(agente => agente.idmaster !== id_agente_inativar));
-
-                console.log("Lista depois:", listaAgentes);
                 setStatusNotificacao(true);
                 setTipoNotificacao("success");
                 setTextoNotificacao(response.data.message);
-            } else {                
+            } else {
                 setStatusNotificacao(true);
                 setTipoNotificacao("danger");
                 setTextoNotificacao("Retorno inesperado, verifique os dados retornados.");
             }
-        } catch (error) {    
+        } catch (error) {
             setStatusNotificacao(true);
-            setTipoNotificacao("danger");               
-            if (error.response) {                     
-                if (error.response.status === 400) {                    
+            setTipoNotificacao("danger");
+            if (error.response) {
+                if (error.response.status === 400) {
                     setTextoNotificacao(error.response.data.error);
                 } else if (error.response.status === 404) {
                     setTextoNotificacao(error.response.data.error);
@@ -192,12 +221,11 @@ export const AgentePage = () => {
                 } else {
                     setTextoNotificacao("Ocorreu um erro desconhecido ao tentar alterar o status.");
                 }
-            } else {              
+            } else {
                 setTextoNotificacao("Erro de rede ou problema na requisição.");
             }
         }
     };
-    
 
     const handleSubmitAgente = async (data) => {
         try {
@@ -246,24 +274,26 @@ export const AgentePage = () => {
     const handleAbrirModalEditarAgente = async (data) => {
         let idmaster_agente = data.target.id;
         const agente = listaAgentes.find((a) => a.idmaster === idmaster_agente);
-
+        
         if (!agente) {
             console.error(`Agente com idmaster ${idmaster_agente} não encontrado.`);
             return;
         }
+
+        setempresas_habilitadas(agente.empresas_habilitadas)
         setSelectedAgente(agente);
         setShowEditModal(true);
 
-        var instrucao_tratado = (Array.isArray(agente.instrucoes) && agente.instrucoes.length > 0 && agente.instrucoes[0]['instrucao']) 
-        ? agente.instrucoes[0]['instrucao'] 
-        : "";
-  
+        var instrucao_tratado = (Array.isArray(agente.instrucoes) && agente.instrucoes.length > 0 && agente.instrucoes[0]['instrucao'])
+            ? agente.instrucoes[0]['instrucao']
+            : "";
+
         resetEdit({
             edit_nome_agente: agente.nome || "1",
             edit_descricao_agente: agente.descritivo || "",
             edit_tokens_maximos_agente: agente.max_token || "",
             edit_select_tipo_agente: agente.tipo || "",
-            edit_instrucao_agente:  instrucao_tratado
+            edit_instrucao_agente: instrucao_tratado
         });
 
         // Se necessário, carregar os arquivos associados ao agente      
@@ -299,7 +329,7 @@ export const AgentePage = () => {
             if (data.base_conhecimento_edit && data.base_conhecimento_edit.length > 0) {
                 form_obj_agente.append('base_conhecimento_data', data.base_conhecimento_edit[0]);
             }
-            
+
             form_obj_agente.append('instrucoes_data', JSON.stringify([{ "instrucao": data.edit_instrucao_agente }]));
 
             for (let [key, value] of form_obj_agente.entries()) {
@@ -335,7 +365,7 @@ export const AgentePage = () => {
                     <div className="accordion" id="collapsibleSection">
 
                         <div className="card accordion-item">
-                          
+
                             <div
                                 id="collapseDeliveryAddress"
                                 className="accordion-collapse collapse show"
@@ -468,7 +498,7 @@ export const AgentePage = () => {
                                                                         file.type === 'text/plain' ||
                                                                         file.type ===
                                                                         'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
-                                                                        file.type === 'application/msword';                                                                                                                                            
+                                                                        file.type === 'application/msword';
                                                                     return (
                                                                         <div key={file.name} className="file-preview">
                                                                             {isValidFile ? (
@@ -505,6 +535,11 @@ export const AgentePage = () => {
                                                 </div>
                                             </div>
                                         </div>
+
+
+
+
+
 
                                         <div className="row card-padding-30 mt-8">
                                             <div>
@@ -642,9 +677,9 @@ export const AgentePage = () => {
                 <Modal.Header closeButton>
                     <Modal.Title>Editar Agente</Modal.Title>
                 </Modal.Header>
-                <Modal.Body style={{paddingLeft: 35, paddingRight: 35}}>
+                <Modal.Body style={{ paddingLeft: 35, paddingRight: 35 }}>
                     <form onSubmit={handleSubmitEdit(handleSubmitEditAgente)}>
-                        <div className="row">                    
+                        <div className="row">
                             <div className="col-md-4">
                                 <label htmlFor="edit_nome_agente" className="form-label">Nome</label>
                                 <input
@@ -798,6 +833,58 @@ export const AgentePage = () => {
                                     {errorsEdit?.base_conhecimento_edit && (
                                         <p className="input-error-message">Selecione pelo menos um arquivo.</p>
                                     )}
+                                </div>
+                            </div>
+
+
+                            {/* Permissões */}
+                            <div className="row card-padding-30 mt-8">
+                                <div>
+                                    <hr />
+                                </div>
+                                <h5>Permissões</h5>
+                                <div className="col-md-6">
+                                    <label htmlFor="edit_picker_empresas" className="form-label">Empresas</label>
+                                    <select
+                                        id="edit_picker_empresas"
+                                        name="edit_picker_empresas"
+                                        className={`selectpicker w-100 form-control ${errorsEdit?.edit_picker_empresas ? 'input-error' : ''}`}
+                                        data-style="btn-default"
+                                        {...registerEdit("edit_picker_empresas", {
+                                            validate: (value) => value.length > 0,
+                                        })}
+                                        multiple
+                                        data-actions-box="true"
+                                    >
+                                        {/* Lista todas as empresas com as habilitadas já selecionadas */}
+                                        {empresas.map((empresa) => (
+                                            <option
+                                                key={empresa.id}
+                                                value={empresa.id}
+                                                selected={Object.keys(empresas_habilitadas).includes(empresa.nome)}
+                                            >
+                                                {empresa.nome}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {errorsEdit?.edit_picker_empresas && <p className="input-error-message">Selecione pelo menos 1 empresa.</p>}
+                                </div>
+                                <div className="col-md-6">
+                                    <label htmlFor="edit_picker_departamentos" className="form-label">Departamentos</label>
+                                    <select
+                                        id="edit_picker_departamentos"
+                                        name="edit_picker_departamentos"
+                                        className={`selectpicker w-100 form-control ${errorsEdit?.edit_picker_departamentos ? 'input-error' : ''}`}
+                                        data-style="btn-default"
+                                        {...registerEdit("edit_picker_departamentos", {
+                                            validate: (value) => value.length > 0,
+                                        })}
+                                        multiple
+                                        data-actions-box="true"
+                                    >
+                                  
+                                    </select>
+                                    {errorsEdit?.edit_picker_departamentos && <p className="input-error-message">Selecione pelo menos 1 departamento.</p>}
                                 </div>
                             </div>
                         </div>
