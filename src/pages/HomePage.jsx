@@ -59,7 +59,7 @@ export const HomePage = () => {
 
     const handleClickAgente = (id_Agente) => {
         handleAbrirNovoChat(id_Agente);
-        navigate('/chat');
+        navigate(`${process.env.REACT_APP_BASE_PATH}/Chat`);
     };
 
     return (
