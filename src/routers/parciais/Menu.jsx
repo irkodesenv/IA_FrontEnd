@@ -117,7 +117,7 @@ const Menu = () => {
                     <ul className={`menu-sub ${openIndex === 2 ? 'show' : ''}`}>
                         <li className={`menu-item ${activeSubIndex === 5 ? 'active' : ''}`}>
                             <Link to={`${process.env.REACT_APP_BASE_PATH}/agentes`} onClick={() => setActiveSubItem(5)} className="menu-link">
-                                <div className="text-truncate" data-i18n="Agentes">Agentes</div>
+                                <div className="text-truncate" data-i18n="Agentes">Agentes </div>
                             </Link>
                         </li>
                     </ul>
