@@ -3,29 +3,29 @@ import React, { useState } from 'react';
 const Head = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
-  
-  const handleOpenMenu = () => {
-      const htmlElement = document.documentElement;
 
-      if(openMenu){
-        htmlElement.classList.remove('light-style', 'layout-navbar-fixed', 'layout-compact', 'layout-menu-100vh', 'layout-menu-fixed', 'layout-menu-expanded');
-      }else{
-        htmlElement.classList.add('light-style', 'layout-navbar-fixed', 'layout-compact', 'layout-menu-100vh', 'layout-menu-fixed', 'layout-menu-expanded');
-      }     
+  const handleOpenMenu = () => {
+    const htmlElement = document.documentElement;
+
+    if (openMenu) {
+      htmlElement.classList.remove('light-style', 'layout-navbar-fixed', 'layout-compact', 'layout-menu-100vh', 'layout-menu-fixed', 'layout-menu-expanded');
+    } else {
+      htmlElement.classList.add('light-style', 'layout-navbar-fixed', 'layout-compact', 'layout-menu-100vh', 'layout-menu-fixed', 'layout-menu-expanded');
+    }
   };
 
 
   const toggleLayout = () => {
-      const htmlElement = document.documentElement;
-      if (collapsed) {
-          htmlElement.classList.remove('layout-menu-collapsed');
-          htmlElement.classList.add('light-style', 'layout-navbar-fixed', 'layout-compact', 'layout-menu-fixed');
-      } else {
-          htmlElement.classList.remove('light-style', 'layout-navbar-fixed', 'layout-compact', 'layout-menu-fixed');
-          htmlElement.classList.add('layout-menu-collapsed');
-          htmlElement.classList.add('d-block');
-      }
-      setCollapsed(!collapsed);
+    const htmlElement = document.documentElement;
+    if (collapsed) {
+      htmlElement.classList.remove('layout-menu-collapsed');
+      htmlElement.classList.add('light-style', 'layout-navbar-fixed', 'layout-compact', 'layout-menu-fixed');
+    } else {
+      htmlElement.classList.remove('light-style', 'layout-navbar-fixed', 'layout-compact', 'layout-menu-fixed');
+      htmlElement.classList.add('layout-menu-collapsed');
+      htmlElement.classList.add('d-block');
+    }
+    setCollapsed(!collapsed);
   };
 
 
@@ -33,30 +33,30 @@ const Head = () => {
     // Remove os tokens do localStorage
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-  
+
     // Redireciona o usuário para a página de login
     window.location.href = `/Login`;
   };
-   
+
 
   return (
 
-      <nav
-        className="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
-        id="layout-navbar">
-        <div className="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0 d-xl-none">
-          <a className="nav-item nav-link px-0 me-xl-6" href="#" onClick={ (e) => {e.preventDefault(); toggleLayout(); handleOpenMenu()}}>
-            <i className="bx bx-menu bx-md"></i>
-          </a>
-        </div>
+    <nav
+      className="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+      id="layout-navbar">
+      <div className="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0 d-xl-none">
+        <a className="nav-item nav-link px-0 me-xl-6" href="#" onClick={(e) => { e.preventDefault(); toggleLayout(); handleOpenMenu() }}>
+          <i className="bx bx-menu bx-md"></i>
+        </a>
+      </div>
 
-        <div className="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
-      
-    
+      <div className="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
 
-          <ul className="navbar-nav flex-row align-items-center ms-auto">
-      
-        {/* 
+
+
+        <ul className="navbar-nav flex-row align-items-center ms-auto">
+
+          {/* 
             <li className="nav-item dropdown-style-switcher dropdown me-2 me-xl-0">
               <a className="nav-link dropdown-toggle hide-arrow" href="#" onClick={(e) => e.preventDefault()} data-bs-toggle="dropdown">
                 <i className="bx bx-md"></i>
@@ -423,37 +423,36 @@ const Head = () => {
                 </li>
               </ul>
             </li> */}
-      
-            <li className="nav-item navbar-dropdown dropdown-user dropdown">
-              <a
-                className="nav-link dropdown-toggle hide-arrow p-0"
-                href="#" onClick={(e) => e.preventDefault()}
-                data-bs-toggle="dropdown">
-                <div className="avatar avatar-online">
-                <img src={`${process.env.PUBLIC_URL}/static/assets/img/avatars/5.png`} alt="Avatar" className="rounded-circle" />
-                </div>
-              </a>
-              <ul className="dropdown-menu dropdown-menu-end">
-                <li>
-                  <a className="dropdown-item" href="pages-account-settings-account.html">
-                    <div className="d-flex">
-                      <div className="flex-shrink-0 me-3">
-                        <div className="avatar avatar-online">
-                        <img src={`${process.env.PUBLIC_URL}/static/assets/img/avatars/5.png`} alt="Avatar" className="rounded-circle" />
-                          
-                        </div>
-                      </div>
-                      <div className="flex-grow-1">
-                        <h6 className="mb-0">User</h6>
-                        <small className="text-muted">Admin</small>
+
+          <li className="nav-item navbar-dropdown dropdown-user dropdown">
+            <a
+              className="nav-link dropdown-toggle hide-arrow p-0"
+              href="#" onClick={(e) => e.preventDefault()}
+              data-bs-toggle="dropdown">
+              <div className="avatar avatar-online">
+                <img src={`${process.env.PUBLIC_URL}/static/assets/img/avatars/21.png`} alt="Avatar" className="rounded-circle" />
+              </div>
+            </a>
+            <ul className="dropdown-menu dropdown-menu-end">
+              <li>
+                <a className="dropdown-item" href="">
+                  <div className="d-flex">
+                    <div className="flex-shrink-0 me-3">
+                      <div className="avatar avatar-online">
+                        <img src={`${process.env.PUBLIC_URL}/static/assets/img/avatars/21.png`} alt="Avatar" className="rounded-circle" />
                       </div>
                     </div>
-                  </a>
-                </li>
-                <li>
-                  <div className="dropdown-divider my-1"></div>
-                </li>
-                {/* 
+                    <div className="flex-grow-1">
+                      <h6 className="mb-0">Usuário Irko</h6>
+                      <small className="text-muted"></small>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <div className="dropdown-divider my-1"></div>
+              </li>
+              {/* 
                 <li>
                   <a className="dropdown-item" href="pages-profile-user.html">
                     <i className="bx bx-user bx-md me-3"></i><span>My Profile</span>
@@ -489,18 +488,18 @@ const Head = () => {
                 <li>
                   <div className="dropdown-divider my-1"></div>
                 </li>   */}
-                <li>
-                  <a className="dropdown-item" href="#" onClick={handleLogoff}>
-                    <i className="bx bx-power-off bx-md me-3"></i><span>Sair</span>
-                  </a>
-                </li>
-             
-              </ul>
-            </li>
-           
-          </ul>          
-        </div>
-      </nav> 
+              <li>
+                <a className="dropdown-item" href="#" onClick={handleLogoff}>
+                  <i className="bx bx-power-off bx-md me-3"></i><span>Sair</span>
+                </a>
+              </li>
+
+            </ul>
+          </li>
+
+        </ul>
+      </div>
+    </nav>
   )
 }
 

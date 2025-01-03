@@ -46,3 +46,7 @@
     transform: rotate(360deg);
   }
 }
+
+.icon-black {
+  color: #384551 !important;
+}

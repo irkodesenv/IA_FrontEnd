@@ -21,6 +21,7 @@ export const ChatPage = () => {
   const [mostrarAvaliacaoResposta, setMostrarAvaliacaoResposta] = useState(false)
   const [arquivo, setArquivo] = useState([])
   const [feitoUpload, setfeitoUpload] = useState(false);
+  const options = ["Mais curta", "Longa", "Elaborada", "Informal"];
 
   // Agentes
   useEffect(() => {
@@ -76,7 +77,7 @@ export const ChatPage = () => {
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     ]
 
-    if (!tipo_arquivos_permitidos.includes(tipo_arquivo_upload)){
+    if (!tipo_arquivos_permitidos.includes(tipo_arquivo_upload)) {
       alert("Permitido somente Word e Txt no momento.");
       return;
     }
@@ -125,30 +126,33 @@ export const ChatPage = () => {
   };
 
 
-  const handleSubmitChat = async () => {
-  
-    if (!message && arquivo.length === 0) {
+  const handleSubmitChat = async (atalho_pergunta) => {
+    // Atalho e usado, quando o usuario clica no botao do tipo de resposta
+
+    let mensagem_usuario = message ? message : atalho_pergunta
+
+    if (!message && arquivo.length === 0 && !atalho_pergunta) {
       return;
     }
 
     // Usado para preencher de forma prévia o que o usuario perguntou, evitando que so seja carregado no chat junto com a resposta.
     const obj_usuario_pergunta = {
       "autor": "2",
-      "mensagem": message
+      "mensagem": mensagem_usuario
     }
 
     const form_obj_agente = new FormData();
     form_obj_agente.append('idmaster', activeBoxChats);
     form_obj_agente.append('id_agente', headerAgente?.id_agente || "");
     form_obj_agente.append('autor', "2");
-    form_obj_agente.append('mensagem', message);
+    form_obj_agente.append('mensagem', mensagem_usuario);
 
-    
-    if(!headerAgente?.id_agente){
+
+    if (!headerAgente?.id_agente) {
       handleAbrirChatLivre()
       return
     }
-    
+
     if (arquivo) {
       arquivo.forEach((file, index) => {
         form_obj_agente.append(`arquivo_upload_${index}`, file);
@@ -168,7 +172,7 @@ export const ChatPage = () => {
       const flg_avaliar_pergunta = agente.data[0].avalia
 
       // Mudando nome do objeto em tempo real, no refresh ja vira o correto
-      if (agente.data[0].titulo){
+      if (agente.data[0].titulo) {
         const objSelecionado = listaChat.find(item => item.idmaster === activeBoxChats)
         objSelecionado.titulo = agente.data[0].titulo
         headerAgente.titulo = agente.data[0].titulo
@@ -176,11 +180,11 @@ export const ChatPage = () => {
 
       setMostrarLoadginPergunta(false)
       listaHistoricoChat(headerAgente);
-      
-      if(!flg_avaliar_pergunta){
+
+      if (!flg_avaliar_pergunta) {
         return
       }
-      
+
       setMostrarAvaliacaoResposta(true)
 
     } catch {
@@ -213,24 +217,24 @@ export const ChatPage = () => {
   const handleAbrirChatLivre = async () => {
 
     const obj_chat = {
-        "idmaster": gerarIdMaster(),
-        "autor": "1",
-        "mensagem": "Como posso ajudar hoje?"
-      }
-  
-      try {
-  
-        await apiInstance.post('v1/chat/', obj_chat)
-  
-        const novaLista = await listarChats("");
+      "idmaster": gerarIdMaster(),
+      "autor": "1",
+      "mensagem": "Como posso ajudar hoje?"
+    }
 
-        setListaChat(novaLista);
+    try {
 
-        setListaAtualizada(true);
-  
-      } catch (erro) {
-        console.log(erro)
-      }
+      await apiInstance.post('v1/chat/', obj_chat)
+
+      const novaLista = await listarChats("");
+
+      setListaChat(novaLista);
+
+      setListaAtualizada(true);
+
+    } catch (erro) {
+      console.log(erro)
+    }
 
   }
 
@@ -282,6 +286,7 @@ export const ChatPage = () => {
       return true
     }
   }
+
 
   return (
     <>
@@ -350,20 +355,33 @@ export const ChatPage = () => {
                         <i
                           className="speech-to-text bx bx-microphone bx-md btn btn-icon cursor-pointer text-heading"></i>
                     */}
-                      {
-                        feitoUpload ? (
-                          <label htmlFor="attach-doc" className="form-label mb-0">
-                            <i className="bx bx-check-circle bx-md text-success bx-md cursor-pointer btn btn-icon mx-1"></i>
-                            <input type="file" name="arquivo_upload" onChange={(e) => handleArquivo(e)} id="attach-doc" hidden />
-                          </label>
-                        ) : (
-                          <label htmlFor="attach-doc" className="form-label mb-0">
-                            <i className="bx bx-paperclip bx-md cursor-pointer btn btn-icon mx-1 text-heading"></i>
-                            <input type="file" name="arquivo_upload" onChange={(e) => handleArquivo(e)} id="attach-doc" hidden />
-                          </label>
-                        )
-                      }                   
-                    <button onClick={(e) => { e.preventDefault(); handleSubmitChat(); }} disabled={mostrarAvaliacaoResposta} className="btn btn-primary d-flex send-msg-btn">
+                    <div class="dropdown">
+                      <button class="btn p-0" type="button" id="totalRevenue" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="bx bx-slider-alt"></i>
+                      </button>
+                      <div class="dropdown-menu dropdown-menu-end" aria-labelledby="totalRevenue">
+                        <p style={{ marginLeft: 20 }}> Me dê a resposta: </p>
+                        <a class="dropdown-item" data-value="Preciso de uma resposta mais curta" onClick={(e) => {handleSubmitChat(e.currentTarget.getAttribute("data-value"))}}> <i class="bx bx-menu-alt-right"></i> Mais curta</a>
+                        <a class="dropdown-item" data-value="Preciso de uma resposta mais longa" onClick={(e) => {handleSubmitChat(e.currentTarget.getAttribute("data-value"))}}> <i class="bx bx-list-minus"></i> Mais longa</a>
+                        <a class="dropdown-item" data-value="Preciso de uma resposta mais simples" onClick={(e) => {handleSubmitChat(e.currentTarget.getAttribute("data-value"))}}> <i class="bx bx-list-plus"></i> Mais simples</a>
+                        <a class="dropdown-item" data-value="Preciso de uma resposta mais informal" onClick={(e) => {handleSubmitChat(e.currentTarget.getAttribute("data-value"))}}> <i class="bx bx-align-middle"></i> Mais informal</a>
+                        <a class="dropdown-item" data-value="Preciso de uma resposta mais profissional" onClick={(e) => {handleSubmitChat(e.currentTarget.getAttribute("data-value"))}}> <i class="bx bx-briefcase-alt"></i> Mais profissional</a>
+                      </div>
+                    </div>
+                    {
+                      feitoUpload ? (
+                        <label htmlFor="attach-doc" className="form-label mb-0">
+                          <i className="bx bx-check-circle bx-md text-success bx-md cursor-pointer btn btn-icon mx-1 icon-black"></i>
+                          <input type="file" name="arquivo_upload" onChange={(e) => handleArquivo(e)} id="attach-doc" hidden />
+                        </label>
+                      ) : (
+                        <label htmlFor="attach-doc" className="form-label mb-0">
+                          <i className="bx bx-paperclip bx-md cursor-pointer btn btn-icon mx-1 text-heading"></i>
+                          <input type="file" name="arquivo_upload" onChange={(e) => handleArquivo(e)} id="attach-doc" hidden />
+                        </label>
+                      )
+                    }
+                    <button onClick={(e) => { e.preventDefault(); handleSubmitChat(""); }} disabled={mostrarAvaliacaoResposta} className="btn btn-primary d-flex send-msg-btn">
                       <span className="align-middle d-md-inline-block d-none">Enviar</span>
                       <i className="bx bx-paper-plane bx-sm ms-md-2 ms-0"></i>
                     </button>
