@@ -25,6 +25,12 @@ function Login() {
     })
       .then((response) => {
         const statusCode = response.status;
+        console.log(statusCode)
+
+        if(statusCode === 401){
+          window.location.reload();
+        }
+
         return response.json().then((data) => ({
           statusCode: statusCode,
           data: data,
