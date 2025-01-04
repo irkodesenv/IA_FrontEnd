@@ -24,7 +24,6 @@ export const AgentePage = () => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedAgente, setSelectedAgente] = useState(null);
     const [empresas, setEmpresas] = useState([]);
-    const [departamentos, setDepartamentos] = useState([]);
     const [empresas_habilitadas, setempresas_habilitadas] = useState([]);
 
     // Agentes
@@ -39,6 +38,26 @@ export const AgentePage = () => {
     }, []);
 
     useEffect(() => {
+        const fetchEmpresas = async () => {
+            const empresas = await listarEmpresas("");
+            setOptionsEmpresas(empresas);
+        };
+        fetchEmpresas();
+
+        const fetchTipoAgente = async () => {
+            const tipo_agente = await listarTipoAgentes("");
+            setSelectTipoAgente(tipo_agente);
+        };
+
+        fetchTipoAgente();
+
+        if (window.$) {
+            window.$('.selectpicker').selectpicker();
+        }
+
+    }, []);
+
+    useEffect(() => {
         updateModalSelectpicker();
     }, [showEditModal]);
 
@@ -46,7 +65,7 @@ export const AgentePage = () => {
         if (window.$) {
             const $selectEmpresas = window.$('#edit_picker_empresas');
             const $selectDepartamentos = window.$('#edit_picker_departamentos');
-            
+
             $selectEmpresas.selectpicker('destroy');
             $selectDepartamentos.selectpicker('destroy');
 
@@ -58,13 +77,24 @@ export const AgentePage = () => {
             $selectEmpresas.selectpicker('render');
 
             $selectDepartamentos.empty();
+            options_empresas.forEach((empresa) => {
+                const habilitados = empresas_habilitadas[empresa.razao_social];
+                if (!habilitados) return;
 
-            Object.entries(empresas_habilitadas).forEach(([empresa, departamentos]) => {
-                departamentos.forEach((departamento) => {
-                    $selectDepartamentos.append(new Option(departamento.nome, departamento.id, true, true));
+                const ids_habilitados = habilitados.map(dep => dep.id);
+                empresa.departamentos.forEach((departamento) => {
+                    const isHabilitado = ids_habilitados.includes(departamento.id);
+                    $selectDepartamentos.append(new Option(
+                        empresa.sigla + " - " + departamento.nome,
+                        departamento.id,
+                        false,
+                        isHabilitado
+                    ));
                 });
             });
             $selectDepartamentos.selectpicker('render');
+
+            $selectEmpresas.on('changed.bs.select', handleEmpresaChangeEdit);
         }
     };
 
@@ -115,7 +145,42 @@ export const AgentePage = () => {
         setOptionsDepartamento(departamentos);
     };
 
-    // Função para atualizar as opções no selectpicker
+    const handleEmpresaChangeEdit = async () => {
+        const selectedOptions = Array.from(
+            document.getElementById('edit_picker_empresas').selectedOptions,
+            option => parseInt(option.value, 10)
+        );
+        const $selectDepartamentos = window.$('#edit_picker_departamentos');
+
+        const options_departamentos = await apiInstance.get(`v1/empresa/departamentos/?id_empresa=${JSON.stringify(selectedOptions)}`);
+        const departamentos = Array.isArray(options_departamentos.data) ? options_departamentos.data : [options_departamentos.data];
+
+        $selectDepartamentos.selectpicker('destroy');
+
+        departamentos.forEach(departamento => {
+            const empresaSigla = options_empresas.find(emp => emp.id === departamento.id_empresa)?.sigla || '';
+            const exists = $selectDepartamentos.find(`option[value="${departamento.id}"]`).length > 0;
+
+            if (!exists) {
+                $selectDepartamentos.append(new Option(
+                    `${empresaSigla} - ${departamento.nome}`,
+                    departamento.id
+                ));
+            }
+        });
+
+        // Remover departamentos de empresas desselecionadas
+        const empresasDesselecionadas = options_empresas.filter(empresa => !selectedOptions.includes(empresa.id));
+        empresasDesselecionadas.forEach(empresa => {
+            empresa.departamentos.forEach(departamento => {
+                $selectDepartamentos.find(`option[value="${departamento.id}"]`).remove();
+            });
+        });
+
+        $selectDepartamentos.selectpicker('render');
+    };
+
+    // Função para atualizar as opções no selectpicker de criacao
     const updateSelectpickerOptions = () => {
         if (window.$) {
             const $select_empresas = window.$('#picker_empresas');
@@ -153,25 +218,6 @@ export const AgentePage = () => {
             $options_departamentos.selectpicker('render');
         }
     };
-
-    useEffect(() => {
-        const fetchEmpresas = async () => {
-            const empresas = await listarEmpresas("");
-            setOptionsEmpresas(empresas);
-        };
-        fetchEmpresas();
-
-        const fetchTipoAgente = async () => {
-            const tipo_agente = await listarTipoAgentes("");
-            setSelectTipoAgente(tipo_agente);
-        };
-
-        fetchTipoAgente();
-
-        if (window.$) {
-            window.$('.selectpicker').selectpicker();
-        }
-    }, []);
 
     // Picker Departamento e empresa
     useEffect(() => {
@@ -274,7 +320,7 @@ export const AgentePage = () => {
     const handleAbrirModalEditarAgente = async (data) => {
         let idmaster_agente = data.target.id;
         const agente = listaAgentes.find((a) => a.idmaster === idmaster_agente);
-        
+
         if (!agente) {
             console.error(`Agente com idmaster ${idmaster_agente} não encontrado.`);
             return;
@@ -331,10 +377,6 @@ export const AgentePage = () => {
             }
 
             form_obj_agente.append('instrucoes_data', JSON.stringify([{ "instrucao": data.edit_instrucao_agente }]));
-
-            for (let [key, value] of form_obj_agente.entries()) {
-                console.log(`${key}: ${value}`);
-            }
 
             await apiInstance.put(`v1/agente/${selectedAgente.idmaster}/`, form_obj_agente);
 
@@ -415,7 +457,7 @@ export const AgentePage = () => {
                                                     data-allow-clear="true"
                                                     {...register("select_tipo_agente", {
                                                         validate: (value) => {
-                                                            return value.length > 0;
+                                                            return value !== "";
                                                         }
                                                     })}
                                                 >
@@ -535,11 +577,6 @@ export const AgentePage = () => {
                                                 </div>
                                             </div>
                                         </div>
-
-
-
-
-
 
                                         <div className="row card-padding-30 mt-8">
                                             <div>
@@ -715,7 +752,7 @@ export const AgentePage = () => {
                                     data-allow-clear="true"
                                     {...registerEdit("edit_select_tipo_agente", {
                                         validate: (value) => {
-                                            return value.length > 0;
+                                            return value !== ""
                                         }
                                     })}
                                 >
@@ -882,11 +919,15 @@ export const AgentePage = () => {
                                         multiple
                                         data-actions-box="true"
                                     >
-                                  
+
                                     </select>
                                     {errorsEdit?.edit_picker_departamentos && <p className="input-error-message">Selecione pelo menos 1 departamento.</p>}
                                 </div>
                             </div>
+                        </div>
+
+                        <div className="col-12 mt-4">
+                            <hr></hr>
                         </div>
 
                         <div className="row mt-4">
