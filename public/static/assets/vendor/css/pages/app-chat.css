@@ -140,6 +140,10 @@
   position: relative;
   height: calc(100vh - 11.3rem);
   transition: all 0.25s ease;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column; /* Garante que os itens internos sejam empilhados */
 }
 .layout-navbar-hidden .app-chat .app-chat-history {
   height: calc(100vh - 6.5rem);
