@@ -25,7 +25,8 @@ export const ChatComponent = ({ historicoChat, mostrarLoadginPergunta, resposta_
         let blocoAtual = null;
 
         linhas.forEach((linha) => {
-            const inicioCodigo = linha.match(/^```(\w+)?/);
+            const inicioCodigo = linha.match(/^\s*```(\w+)?/);
+            
             if (inicioCodigo) {
                 if (!blocoAtual) {
                     blocoAtual = { tipo: 'codigo', linguagem: inicioCodigo[1] || 'plaintext', conteudo: [] };
@@ -55,6 +56,7 @@ export const ChatComponent = ({ historicoChat, mostrarLoadginPergunta, resposta_
                                     style={{
                                         backgroundColor: '#f5f5f5',
                                         padding: '5px 10px',
+                                        maxWidth: '100%',
                                         fontSize: '0.9em',
                                         fontFamily: 'monospace',
                                         borderBottom: '1px solid #ddd',

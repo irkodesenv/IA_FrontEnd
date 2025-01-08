@@ -129,7 +129,9 @@ export const ChatPage = () => {
   const handleSubmitChat = async (atalho_pergunta) => {
     // Atalho e usado, quando o usuario clica no botao do tipo de resposta
 
-    let mensagem_usuario = message ? message : atalho_pergunta
+    const sanitizedMessage = message.trim().replace(/\s+/g, ' ');
+
+    let mensagem_usuario = sanitizedMessage ? sanitizedMessage : atalho_pergunta
 
     if (!message && arquivo.length === 0 && !atalho_pergunta) {
       return;
@@ -287,7 +289,6 @@ export const ChatPage = () => {
     }
   }
 
-
   return (
     <>
 
@@ -341,13 +342,28 @@ export const ChatPage = () => {
               <div className="chat-history-footer shadow-xs">
 
                 <form className="form-send-message d-flex justify-content-between align-items-center">
-                  <input
+                  <textarea
                     id="input-message-chat"
                     className="form-control message-input border-0 me-4 shadow-none"
                     value={message}
                     placeholder={mostrarAvaliacaoResposta ? "Avalie para perguntar novamente" : "Como posso te ajudar?"}
                     onChange={(e) => setMessage(e.target.value)}
-                    disabled={mostrarAvaliacaoResposta} />
+                    disabled={mostrarAvaliacaoResposta} 
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSubmitChat();
+                    }
+                    }}
+                    style={{
+                      height: 'auto',
+                      overflowY: 'auto',
+                      resize: 'none',
+                      msOverflowStyle: 'none',
+                      scrollbarWidth: 'none'
+                    }}
+                    rows='2'
+                  />
 
                   <div className="message-actions d-flex align-items-center">
 
