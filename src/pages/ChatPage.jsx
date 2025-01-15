@@ -362,7 +362,7 @@ export const ChatPage = () => {
                       msOverflowStyle: 'none',
                       scrollbarWidth: 'none'
                     }}
-                    rows='2'
+                    rows='1'
                   />
 
                   <div className="message-actions d-flex align-items-center">
