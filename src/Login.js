@@ -7,11 +7,13 @@ function Login() {
   const [empresa, setEmpresa] = useState("");
   const [flagSenhaInvalida, setFlagSenhaInvalida] = useState(false);
   const [notificacao, setNotificacao] = useState("")
+  const [requisicaoEnviada, setRequisicaoEnviada] = useState(false)
 
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
+    setRequisicaoEnviada(true)
     let path_get_token = process.env.REACT_APP_BASE_PATH_API + "/v1/token/";
-
+    
     fetch(path_get_token, {
       method: "POST",
       headers: {
@@ -25,7 +27,6 @@ function Login() {
     })
       .then((response) => {
         const statusCode = response.status;
-        console.log(statusCode)
 
         if(statusCode === 401){
           window.location.reload();
@@ -48,6 +49,7 @@ function Login() {
           localStorage.removeItem("access_token");
           localStorage.removeItem("refresh_token");
           setFlagSenhaInvalida(true);
+          setRequisicaoEnviada(false)
         }
       })
       .catch((error) => console.error("Erro no login:", error));
@@ -166,15 +168,33 @@ function Login() {
                     </div> 
                   ):("")
                 }
-               
-                <button
-                  type="submit"
-                  className="btn btn-primary d-grid w-100"
-                  style={{                   
-                    height: '60px', // O React reconhece automaticamente o importante
-                  }}>
-                  <h3 style={{color: '#FFF'}}> Entrar</h3>
-                </button>
+
+                {
+                  requisicaoEnviada ? (
+                    <button
+                    type="button"
+                    className="btn btn-primary d-grid w-100"
+                    style={{                   
+                      height: '60px'
+                    }}>
+                      <div class="sk-fold" style={{color: '#f68549'}}>
+                        <div class="sk-fold-cube"></div>
+                        <div class="sk-fold-cube"></div>
+                        <div class="sk-fold-cube"></div>
+                        <div class="sk-fold-cube"></div>
+                      </div>                    
+                  </button>
+                  ):(
+                    <button
+                    type="submit"
+                    className="btn btn-primary d-grid w-100"
+                    style={{                   
+                      height: '60px'
+                    }}>
+                      <h3 style={{color: '#FFF'}}> Entrar</h3>
+                    </button>
+                  )            
+                }
               </form>      
 
             </div>
