@@ -158,6 +158,7 @@ function Login() {
                     <option value="3">Irko Campinas</option>
                     <option value="4">Irkompacta</option>
                     <option value="5">Irko BPS</option>
+                    <option value="6">Irkomacta</option>
                   </select>
                 </div>           
                 {
