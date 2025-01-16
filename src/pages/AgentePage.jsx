@@ -187,8 +187,10 @@ export const AgentePage = () => {
             const $select_tipo_agente = window.$('#select_tipo_agente');
 
             $select_empresas.selectpicker('destroy');
+            $select_tipo_agente.selectpicker('destroy');
 
             $select_empresas.empty();
+            $select_tipo_agente.empty();
 
             options_empresas.forEach(option => {
                 $select_empresas.append(new Option(option.razao_social, option.id));
