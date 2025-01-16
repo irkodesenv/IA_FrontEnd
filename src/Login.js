@@ -28,10 +28,6 @@ function Login() {
       .then((response) => {
         const statusCode = response.status;
 
-        if(statusCode === 401){
-          window.location.reload();
-        }
-
         return response.json().then((data) => ({
           statusCode: statusCode,
           data: data,
@@ -46,8 +42,9 @@ function Login() {
           localStorage.setItem("refresh_token", data.refresh);
           window.location.href = `${process.env.REACT_APP_BASE_PATH}/Chat`;
         } else {
-          localStorage.removeItem("access_token");
-          localStorage.removeItem("refresh_token");
+          
+          //localStorage.removeItem("access_token");
+          //localStorage.removeItem("refresh_token");
           setFlagSenhaInvalida(true);
           setRequisicaoEnviada(false)
         }
@@ -158,7 +155,7 @@ function Login() {
                     <option value="3">Irko Campinas</option>
                     <option value="4">Irkompacta</option>
                     <option value="5">Irko BPS</option>
-                    <option value="6">Irkomacta</option>
+                    <option value="6">Irkompacta</option>
                   </select>
                 </div>           
                 {
